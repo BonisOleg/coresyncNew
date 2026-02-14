@@ -1,0 +1,56 @@
+{% load static %}
+
+<nav class="explore-panel__nav" aria-label="Explore navigation">
+    <ul class="explore-panel__nav">
+        <li class="explore-panel__nav-item">
+            <a class="explore-panel__nav-link"
+               href="#"
+               hx-get="{% url 'explore:experience' %}"
+               hx-target="#explore-panel-content"
+               hx-swap="innerHTML"
+               role="button">
+                The Experience
+            </a>
+        </li>
+        <li class="explore-panel__nav-item">
+            <a class="explore-panel__nav-link"
+               href="#"
+               hx-get="{% url 'explore:membership' %}"
+               hx-target="#explore-panel-content"
+               hx-swap="innerHTML"
+               role="button">
+                Membership
+            </a>
+        </li>
+        <li class="explore-panel__nav-item">
+            <a class="explore-panel__nav-link"
+               href="#"
+               hx-get="{% url 'explore:backyard' %}"
+               hx-target="#explore-panel-content"
+               hx-swap="innerHTML"
+               role="button">
+                The Backyard (Coming Soon)
+            </a>
+        </li>
+        <li class="explore-panel__nav-item">
+            <a class="explore-panel__nav-link"
+               href="#"
+               hx-get="{% url 'explore:story' %}"
+               hx-target="#explore-panel-content"
+               hx-swap="innerHTML"
+               role="button">
+                Story
+            </a>
+        </li>
+        <li class="explore-panel__nav-item">
+            <a class="explore-panel__nav-link"
+               href="#"
+               hx-get="{% url 'explore:contact' %}"
+               hx-target="#explore-panel-content"
+               hx-swap="innerHTML"
+               role="button">
+                Contact
+            </a>
+        </li>
+    </ul>
+</nav>

@@ -1,0 +1,416 @@
+/* ==========================================================================
+   CoreSync Private — Glass Panels
+   Explore menu, concierge chat, glass-morphism overlays
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Backdrop overlay (behind panels)
+   --------------------------------------------------------------------------- */
+
+.panel-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: calc(var(--z-panel) - 1);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-normal) var(--ease-smooth);
+}
+
+.panel-backdrop.is-active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   Explore panel (slides from right)
+   --------------------------------------------------------------------------- */
+
+.explore-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 380px;
+    max-width: 100%;
+    height: 100%;
+    z-index: var(--z-panel);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-left: var(--glass-border);
+    transform: translateX(100%);
+    transition: transform var(--duration-normal) var(--ease-smooth);
+    overflow-y: auto;
+    padding: var(--space-3xl) var(--space-xl) var(--space-xl);
+}
+
+.explore-panel.is-open {
+    transform: translateX(0);
+}
+
+.explore-panel__close {
+    position: absolute;
+    top: var(--space-lg);
+    right: var(--space-lg);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+
+.explore-panel__close:hover {
+    opacity: 1;
+}
+
+.explore-panel__close svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--color-text-primary);
+    stroke-width: 2;
+}
+
+.explore-panel__nav {
+    list-style: none;
+    margin-top: var(--space-xl);
+}
+
+.explore-panel__nav-item {
+    margin-bottom: var(--space-xs);
+}
+
+.explore-panel__nav-link {
+    display: block;
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--text-lg);
+    font-weight: 300;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-primary);
+    border-radius: 8px;
+    transition: background-color var(--duration-fast) var(--ease-smooth);
+}
+
+.explore-panel__nav-link:hover {
+    background-color: var(--color-surface);
+    opacity: 1;
+}
+
+.explore-panel__nav-link--soon {
+    color: var(--color-text-muted);
+}
+
+/* Explore section content (loaded via HTMX) */
+.explore-content {
+    padding: var(--space-xl) 0;
+}
+
+.explore-content__title {
+    font-size: var(--text-xl);
+    font-weight: 300;
+    letter-spacing: var(--tracking-wide);
+    margin-bottom: var(--space-lg);
+}
+
+.explore-content__text {
+    font-size: var(--text-base);
+    font-weight: 300;
+    line-height: var(--leading-relaxed);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+}
+
+.explore-content__signature {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    letter-spacing: var(--tracking-wider);
+    margin-bottom: var(--space-xl);
+}
+
+.explore-content__back {
+    display: inline-block;
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-lg);
+    transition: color var(--duration-fast) var(--ease-smooth);
+}
+
+.explore-content__back:hover {
+    color: var(--color-text-primary);
+    opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   CTA Button (used inside panels)
+   --------------------------------------------------------------------------- */
+
+.cta-btn {
+    display: inline-block;
+    padding: var(--space-sm) var(--space-lg);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-bg);
+    background-color: var(--color-text-primary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity var(--duration-fast) var(--ease-smooth),
+                transform var(--duration-fast) var(--ease-smooth);
+    pointer-events: auto;
+}
+
+.cta-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.cta-btn--ghost {
+    color: var(--color-text-primary);
+    background-color: transparent;
+    border: var(--glass-border);
+}
+
+.cta-btn--ghost:hover {
+    background-color: var(--color-surface);
+}
+
+/* ---------------------------------------------------------------------------
+   Concierge panel (slides from right)
+   --------------------------------------------------------------------------- */
+
+.concierge-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 420px;
+    max-width: 100%;
+    height: 100%;
+    z-index: var(--z-concierge);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-left: var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform var(--duration-normal) var(--ease-smooth);
+}
+
+.concierge-panel.is-open {
+    transform: translateX(0);
+}
+
+/* Concierge header */
+.concierge-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-lg) var(--space-xl);
+    border-bottom: var(--glass-border);
+    flex-shrink: 0;
+}
+
+.concierge-header__title {
+    font-size: var(--text-sm);
+    font-weight: 400;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+}
+
+.concierge-header__close {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+
+.concierge-header__close:hover {
+    opacity: 1;
+}
+
+.concierge-header__close svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--color-text-primary);
+    stroke-width: 2;
+}
+
+/* Concierge content wrapper (loaded via HTMX) */
+#concierge-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Chat messages area */
+.concierge-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-lg) var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    position: relative;
+}
+
+/* Collapsed history (revealed on scroll-up) */
+.chat-msg--collapsed {
+    display: none;
+}
+
+/* Message bubbles */
+.chat-msg {
+    max-width: 90%;
+    padding: var(--space-md) var(--space-lg);
+    border-radius: 12px;
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    font-weight: 300;
+}
+
+.chat-msg--assistant {
+    align-self: flex-start;
+    background-color: var(--color-surface);
+    border: var(--glass-border);
+    color: var(--color-text-primary);
+}
+
+.chat-msg--user {
+    align-self: flex-end;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text-primary);
+}
+
+/* Action buttons inside chat */
+.chat-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+.chat-btn {
+    display: block;
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-primary);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: var(--glass-border);
+    border-radius: 8px;
+    text-align: left;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background-color var(--duration-fast) var(--ease-smooth);
+}
+
+.chat-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Chat images (revealed by concierge) */
+.chat-images {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+.chat-images__img {
+    width: 100%;
+    border-radius: 8px;
+    opacity: 0.9;
+}
+
+/* Chat input */
+.concierge-input {
+    display: flex;
+    gap: var(--space-sm);
+    padding: var(--space-lg) var(--space-xl);
+    border-top: var(--glass-border);
+    flex-shrink: 0;
+}
+
+.concierge-input__field {
+    flex: 1;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--text-sm);
+    background: rgba(255, 255, 255, 0.04);
+    border: var(--glass-border);
+    border-radius: 8px;
+    color: var(--color-text-primary);
+}
+
+.concierge-input__field::placeholder {
+    color: var(--color-text-muted);
+}
+
+.concierge-input__send {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    transition: background-color var(--duration-fast) var(--ease-smooth);
+}
+
+.concierge-input__send:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.concierge-input__send svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--color-text-primary);
+    stroke-width: 2;
+    fill: none;
+}
+
+/* Loading indicator */
+.chat-loading {
+    display: flex;
+    gap: 4px;
+    align-self: flex-start;
+    padding: var(--space-md) var(--space-lg);
+}
+
+    .chat-loading__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-text-muted);
+}
+
+/* Membership list styles */
+.explore-content__list {
+    list-style: disc;
+    padding-left: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+/* Contact section styles */
+.explore-content__contact-btn {
+    display: inline-block;
+    margin-top: var(--space-xs);
+}
+
+.explore-content__concierge-btn {
+    margin-top: var(--space-xl);
+}

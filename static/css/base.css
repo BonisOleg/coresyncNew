@@ -1,0 +1,163 @@
+/* ==========================================================================
+   CoreSync Private — Base Styles
+   Variables, reset, typography
+   ========================================================================== */
+
+:root {
+    /* Color palette — dark cinematic */
+    --color-bg: #0a0a0a;
+    --color-surface: rgba(255, 255, 255, 0.04);
+    --color-glass: rgba(255, 255, 255, 0.06);
+    --color-glass-border: rgba(255, 255, 255, 0.1);
+    --color-text-primary: rgba(255, 255, 255, 0.92);
+    --color-text-secondary: rgba(255, 255, 255, 0.55);
+    --color-text-muted: rgba(255, 255, 255, 0.35);
+    --color-accent: rgba(255, 255, 255, 0.8);
+    --color-overlay: rgba(0, 0, 0, 0.5);
+
+    /* Typography */
+    --font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-display: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 2rem;
+    --text-3xl: 2.75rem;
+    --text-4xl: 3.5rem;
+
+    --leading-tight: 1.2;
+    --leading-normal: 1.6;
+    --leading-relaxed: 1.8;
+
+    --tracking-tight: -0.02em;
+    --tracking-normal: 0;
+    --tracking-wide: 0.05em;
+    --tracking-wider: 0.12em;
+
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+
+    /* Glass panel */
+    --glass-blur: 24px;
+    --glass-bg: rgba(12, 12, 12, 0.75);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+    --glass-radius: 16px;
+
+    /* Z-index layers */
+    --z-background: 0;
+    --z-mood-overlay: 1;
+    --z-scroll-text: 10;
+    --z-panel: 100;
+    --z-concierge: 200;
+    --z-fixed-ui: 300;
+
+    /* Transitions */
+    --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --duration-fast: 200ms;
+    --duration-normal: 400ms;
+    --duration-slow: 800ms;
+    --duration-mood: 3000ms;
+}
+
+/* Reset */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-primary);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    color: var(--color-text-primary);
+    background-color: var(--color-bg);
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+body.is-panel-open {
+    overflow: hidden;
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+
+a:hover {
+    opacity: 0.7;
+}
+
+a:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+button {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+input,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    background: transparent;
+    border: var(--glass-border);
+    border-radius: 8px;
+    padding: var(--space-sm) var(--space-md);
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Utility: visually hidden (a11y) */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

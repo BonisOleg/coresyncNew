@@ -1,0 +1,54 @@
+<!-- Concierge chat content (loaded into #concierge-content via HTMX) -->
+
+<div class="concierge-messages" id="concierge-messages">
+    {% for msg in messages %}
+        {% if msg.role == "assistant" %}
+            <div class="chat-msg chat-msg--assistant {% if msg.id == separator_id %}chat-msg--separator{% endif %}">
+                {{ msg.content }}
+
+                {% if msg.metadata.buttons %}
+                    <div class="chat-buttons">
+                        {% for btn in msg.metadata.buttons %}
+                            <button class="chat-btn" data-action="{{ btn.action }}" type="button">
+                                {{ btn.label }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if msg.metadata.images %}
+                    <div class="chat-images">
+                        {% for img in msg.metadata.images %}
+                            <img class="chat-images__img" src="{{ img.url }}" alt="{{ img.title }}" loading="lazy">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% elif msg.role == "user" %}
+            <div class="chat-msg chat-msg--user">
+                {{ msg.content }}
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<form class="concierge-input" id="concierge-form"
+      hx-post="{% url 'concierge:message' %}"
+      hx-target="#concierge-messages"
+      hx-swap="beforeend"
+      hx-indicator=".chat-loading">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="">
+    <input class="concierge-input__field"
+           type="text"
+           name="message"
+           placeholder="Type a message..."
+           autocomplete="off"
+           aria-label="Chat message">
+    <button class="concierge-input__send" type="submit" aria-label="Send message">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+    </button>
+</form>

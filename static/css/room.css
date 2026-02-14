@@ -1,0 +1,254 @@
+/* ==========================================================================
+   CoreSync Private — Room & Background
+   Master background, mood overlays, sticky layout
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Master background — pinned full viewport
+   --------------------------------------------------------------------------- */
+
+.room-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: var(--z-background);
+    overflow: hidden;
+}
+
+.room-background__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.room-background--placeholder {
+    display: none; /* Hide the placeholder div */
+}
+
+.room-background__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover the entire container */
+    object-position: center; /* Center the video */
+    filter: brightness(0.7); /* Slightly dim the video to improve text readability */
+    transition: opacity var(--duration-mood) var(--ease-smooth); /* Smooth transition when video changes */
+}
+
+/* ---------------------------------------------------------------------------
+   Mood overlay — changes by time of day
+   --------------------------------------------------------------------------- */
+
+.room-mood-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: var(--z-mood-overlay);
+    pointer-events: none;
+    transition: background-color var(--duration-mood) var(--ease-smooth),
+                opacity var(--duration-mood) var(--ease-smooth);
+}
+
+/* Morning: warm amber light */
+body.mood-morning .room-mood-overlay {
+    background: linear-gradient(
+        180deg,
+        rgba(255, 183, 77, 0.08) 0%,
+        rgba(255, 152, 0, 0.04) 50%,
+        rgba(0, 0, 0, 0.2) 100%
+    );
+}
+
+/* Midday: neutral soft light */
+body.mood-midday .room-mood-overlay {
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.03) 0%,
+        rgba(200, 200, 200, 0.02) 50%,
+        rgba(0, 0, 0, 0.15) 100%
+    );
+}
+
+/* Night: deep blue/indigo atmosphere */
+body.mood-night .room-mood-overlay {
+    background: linear-gradient(
+        180deg,
+        rgba(25, 25, 112, 0.12) 0%,
+        rgba(15, 15, 60, 0.08) 50%,
+        rgba(0, 0, 0, 0.4) 100%
+    );
+}
+
+/* ---------------------------------------------------------------------------
+   Fixed UI elements: Logo & Explore icon
+   --------------------------------------------------------------------------- */
+
+.room-logo {
+    position: fixed;
+    top: var(--space-lg);
+    left: var(--space-lg);
+    z-index: var(--z-fixed-ui);
+    max-width: 120px;
+    opacity: 0.9;
+    transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+
+.room-logo:hover {
+    opacity: 1;
+}
+
+.room-logo__img {
+    width: 100%;
+    height: auto;
+}
+
+/* Text-based logo fallback */
+.room-logo__text {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 400;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+}
+
+.room-explore-btn {
+    position: fixed;
+    top: var(--space-lg);
+    right: var(--space-lg);
+    z-index: var(--z-fixed-ui);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    pointer-events: auto;
+    transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+
+.room-explore-btn:hover {
+    opacity: 1;
+}
+
+.room-explore-btn.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.room-explore-btn__icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.room-explore-btn__icon span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-text-primary);
+    border-radius: 1px;
+    transition: transform var(--duration-fast) var(--ease-smooth),
+                opacity var(--duration-fast) var(--ease-smooth);
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll content area
+   --------------------------------------------------------------------------- */
+
+.room-scroll {
+    position: relative;
+    z-index: var(--z-scroll-text);
+    min-height: 300vh;
+    pointer-events: none;
+}
+
+.room-scroll__section {
+    height: 100vh;
+    padding: var(--space-xl);
+}
+
+.room-scroll__text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+    font-size: var(--text-xl);
+    font-weight: 300;
+    letter-spacing: var(--tracking-wide);
+    line-height: var(--leading-relaxed);
+    color: var(--color-text-primary);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.5s var(--ease-smooth);
+}
+
+.room-scroll__text.is-visible {
+    opacity: 1;
+}
+
+/* Hero welcome text (first section) */
+.room-hero {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: var(--z-scroll-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+    padding: var(--space-xl);
+}
+
+.room-hero__title {
+    font-size: var(--text-3xl);
+    font-weight: 300;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-md);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.room-hero__subtitle {
+    font-size: var(--text-lg);
+    font-weight: 300;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-secondary);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Hero enter animation */
+.room-hero.is-loaded .room-hero__title {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 1.2s var(--ease-smooth) 0.3s,
+                transform 1.2s var(--ease-smooth) 0.3s;
+}
+
+.room-hero.is-loaded .room-hero__subtitle {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 1.2s var(--ease-smooth) 0.8s,
+                transform 1.2s var(--ease-smooth) 0.8s;
+}
+
+/* Fade hero on scroll */
+.room-hero.is-scrolled {
+    opacity: 0;
+    transition: opacity 1.5s var(--ease-smooth);
+}

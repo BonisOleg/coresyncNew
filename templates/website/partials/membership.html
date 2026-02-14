@@ -1,0 +1,27 @@
+<div class="explore-content fade-in">
+    <a href="#"
+       class="explore-content__back"
+       hx-get="{% url 'explore:panel' %}"
+       hx-target="#explore-panel-content"
+       hx-swap="innerHTML"
+       role="button">
+        &larr; Back
+    </a>
+
+    <h2 class="explore-content__title">Membership</h2>
+
+    <p class="explore-content__text">
+        Membership unlocks insider access to CoreSync Private.
+    </p>
+
+    <ul class="explore-content__text explore-content__list">
+        <li>Priority access to prime booking windows</li>
+        <li>Preferred access to Signature experiences</li>
+        <li>Early access to new rooms, rituals, and technology</li>
+        <li>Access to members-only offerings and prepared surprises</li>
+    </ul>
+
+    <button class="cta-btn" data-action="open-concierge" data-context="membership" type="button">
+        Request membership access
+    </button>
+</div>

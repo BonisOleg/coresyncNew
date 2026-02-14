@@ -1,0 +1,38 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CoreSync Private — A private space that adapts to you.">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>{% block title %}CoreSync Private{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets (no inline styles) -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/room.css' %}">
+    <link rel="stylesheet" href="{% static 'css/panels.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    {% block body %}{% endblock %}
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+
+    <!-- External JS files (no inline scripts) -->
+    <script src="{% static 'js/mood.js' %}" defer></script>
+    <script src="{% static 'js/scroll.js' %}" defer></script>
+    <script src="{% static 'js/panels.js' %}" defer></script>
+    <script src="{% static 'js/concierge.js' %}" defer></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

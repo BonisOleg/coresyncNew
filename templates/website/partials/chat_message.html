@@ -1,0 +1,23 @@
+<!-- Single chat message response (appended to #concierge-messages via HTMX) -->
+
+<div class="chat-msg chat-msg--assistant">
+    {{ assistant_message.content }}
+
+    {% if metadata.buttons %}
+        <div class="chat-buttons">
+            {% for btn in metadata.buttons %}
+                <button class="chat-btn" data-action="{{ btn.action }}" type="button">
+                    {{ btn.label }}
+                </button>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if metadata.images %}
+        <div class="chat-images">
+            {% for img in metadata.images %}
+                <img class="chat-images__img" src="{{ img.url }}" alt="{{ img.title }}" loading="lazy">
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

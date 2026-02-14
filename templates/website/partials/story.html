@@ -1,0 +1,24 @@
+<div class="explore-content fade-in">
+    <a href="#"
+       class="explore-content__back"
+       hx-get="{% url 'explore:panel' %}"
+       hx-target="#explore-panel-content"
+       hx-swap="innerHTML"
+       role="button">
+        &larr; Back
+    </a>
+
+    <h2 class="explore-content__title">Story</h2>
+
+    <p class="explore-content__text">
+        CoreSync was created to design environments, not treatments.<br>
+        Spaces that respond to timing, mood, and presence.<br>
+        Less noise. Less rush. More intention.<br>
+        Technology is used only to remove friction, not add it.<br>
+        The result is not a service. It’s a place you enter.
+    </p>
+
+    <button class="cta-btn" data-action="close-explore" type="button">
+        Enter the experience
+    </button>
+</div>

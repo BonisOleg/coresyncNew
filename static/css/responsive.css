@@ -1,0 +1,118 @@
+/* ==========================================================================
+   CoreSync Private — Responsive
+   Mobile-first breakpoints
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Small screens (up to 767px)
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+    :root {
+        --text-3xl: 2rem;
+        --text-2xl: 1.5rem;
+        --text-xl: 1.25rem;
+    }
+
+    .room-logo {
+        top: var(--space-md);
+        left: var(--space-md);
+        max-width: 90px;
+    }
+
+    .room-explore-btn {
+        top: var(--space-md);
+        right: var(--space-md);
+    }
+
+    .room-hero {
+        padding: var(--space-lg);
+    }
+
+    .room-scroll__text {
+        font-size: var(--text-lg);
+        padding: 0 var(--space-lg);
+    }
+
+    /* Full-screen panels on mobile */
+    .explore-panel {
+        width: 100%;
+        padding: var(--space-2xl) var(--space-lg) var(--space-lg);
+    }
+
+    .concierge-panel {
+        width: 100%;
+        height: 100%;
+        /* iOS Safari height fix */
+        height: -webkit-fill-available;
+    }
+
+    .concierge-input {
+        padding: var(--space-md) var(--space-lg);
+        /* Add padding for iOS home indicator */
+        padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Medium screens (768px to 1023px)
+   --------------------------------------------------------------------------- */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .explore-panel {
+        width: 360px;
+    }
+
+    .concierge-panel {
+        width: 380px;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Large screens (1024px and up)
+   --------------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+    .explore-panel {
+        width: 400px;
+    }
+
+    .concierge-panel {
+        width: 420px;
+    }
+
+    .room-scroll__text {
+        max-width: 650px;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion preference
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms;
+        transition-duration: 0.01ms;
+    }
+
+    .room-background--placeholder {
+        animation: none;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Touch device adjustments
+   --------------------------------------------------------------------------- */
+
+@media (hover: none) {
+    .room-explore-btn {
+        opacity: 0.85;
+    }
+
+    .chat-btn:active {
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+}

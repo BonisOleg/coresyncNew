@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}CoreSync Private{% endblock %}
+
+{% block body %}
+
+<!-- ================================================================
+     Layer 0: Master Background (fixed, full viewport)
+     ================================================================ -->
+    <div class="room-background" id="room-background">
+    <video class="room-background__video" id="background-video"
+           loop muted autoplay playsinline
+           data-video-morning="{% static 'video/morning.mp4' %}"
+           data-video-midday="{% static 'video/lunch.mp4' %}"
+           data-video-night="{% static 'video/evening.mp4' %}"></video>
+</div>
+
+<!-- ================================================================
+     Layer 1: Mood Overlay (time-based, CSS controlled)
+     ================================================================ -->
+<div class="room-mood-overlay" id="room-mood-overlay" aria-hidden="true"></div>
+
+<!-- ================================================================
+     Layer 2: Hero Welcome Text (fades on scroll)
+     ================================================================ -->
+<div class="room-hero" id="room-hero" role="banner">
+    <h1 class="room-hero__title">One private room.</h1>
+    <p class="room-hero__subtitle">Reserved only for you</p>
+</div>
+
+<!-- ================================================================
+     Layer 2: Scroll-Reveal Text Sections
+     ================================================================ -->
+<div class="room-scroll" aria-label="Scroll to explore">
+    <!-- Spacer for hero -->
+    <div class="room-scroll__section"></div>
+
+    <div class="room-scroll__section">
+        <p class="room-scroll__text">Light, sound, and atmosphere move together.</p>
+    </div>
+
+    <div class="room-scroll__section">
+        <p class="room-scroll__text">The room adapts to your timing.</p>
+    </div>
+
+    <div class="room-scroll__section">
+        <p class="room-scroll__text">Nothing is shared.<br>Nothing is rushed.</p>
+    </div>
+
+    <div class="room-scroll__section">
+        <p class="room-scroll__text">This is not a service.<br>It’s a place you enter.</p>
+    </div>
+
+    <div class="room-scroll__section">
+        <p class="room-scroll__text">Membership is access.</p>
+    </div>
+
+    <div class="room-scroll__section">
+        <p class="room-scroll__text">The Backyard is being built.</p>
+    </div>
+
+    <div class="room-scroll__section">
+        <p class="room-scroll__text">Members enter first.</p>
+    </div>
+
+    <div class="room-scroll__section">
+        <p class="room-scroll__text">Welcome to CoreSync Private.</p>
+    </div>
+</div>
+
+<!-- ================================================================
+     Layer 4: Fixed UI — Logo (top-left)
+     ================================================================ -->
+<a href="/" class="room-logo" aria-label="CoreSync Home">
+    <span class="room-logo__text">CoreSync</span>
+</a>
+
+<!-- ================================================================
+     Layer 4: Fixed UI — Explore Button (top-right)
+     ================================================================ -->
+<button class="room-explore-btn is-hidden" id="explore-btn" type="button" aria-label="Open explore menu"
+        hx-get="{% url 'explore:panel' %}"
+        hx-target="#explore-panel-content"
+        hx-swap="innerHTML"
+        hx-trigger="click once">
+    <span class="room-explore-btn__icon" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+    </span>
+</button>
+
+<!-- ================================================================
+     Layer 3: Panel Backdrop
+     ================================================================ -->
+<div class="panel-backdrop" id="panel-backdrop" aria-hidden="true"></div>
+
+<!-- ================================================================
+     Layer 3: Explore Panel (slides from right)
+     ================================================================ -->
+<aside class="explore-panel" id="explore-panel" role="dialog" aria-label="Explore">
+    <button class="explore-panel__close" data-action="close-explore" type="button" aria-label="Close explore">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </button>
+    <div id="explore-panel-content">
+        <!-- Loaded via HTMX -->
+    </div>
+</aside>
+
+<!-- ================================================================
+     Layer 3: Concierge Panel (slides from right)
+     ================================================================ -->
+<aside class="concierge-panel" id="concierge-panel" role="dialog" aria-label="Concierge"
+       hx-get="{% url 'concierge:panel' %}"
+       hx-target="#concierge-content"
+       hx-swap="innerHTML"
+       hx-trigger="load delay:2s">
+
+    <header class="concierge-header">
+        <span class="concierge-header__title">Concierge</span>
+        <button class="concierge-header__close" data-action="close-concierge" type="button" aria-label="Close concierge">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </header>
+
+    <div id="concierge-content">
+        <!-- Chat content loaded via HTMX -->
+    </div>
+</aside>
+
+{% endblock %}

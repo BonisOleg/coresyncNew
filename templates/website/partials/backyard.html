@@ -1,0 +1,23 @@
+<div class="explore-content fade-in">
+    <a href="#"
+       class="explore-content__back"
+       hx-get="{% url 'explore:panel' %}"
+       hx-target="#explore-panel-content"
+       hx-swap="innerHTML"
+       role="button">
+        &larr; Back
+    </a>
+
+    <h2 class="explore-content__title">Backyard</h2>
+
+    <p class="explore-content__text">
+        The Backyard is being built.<br>
+        An outdoor extension of Coresync Private.<br>
+        Designed for heat, water, fire, and open air.<br>
+        Members will enter it first.
+    </p>
+
+    <button class="cta-btn" data-action="open-concierge" data-context="backyard" type="button">
+        Get early access
+    </button>
+</div>

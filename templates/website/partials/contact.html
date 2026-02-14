@@ -1,0 +1,28 @@
+<div class="explore-content fade-in">
+    <a href="#"
+       class="explore-content__back"
+       hx-get="{% url 'explore:panel' %}"
+       hx-target="#explore-panel-content"
+       hx-swap="innerHTML"
+       role="button">
+        &larr; Back
+    </a>
+
+    <h2 class="explore-content__title">Contact</h2>
+
+    <p class="explore-content__text">
+        Phone<br>
+        <a href="tel:+10000000000" class="cta-btn explore-content__contact-btn">
+            Call Coresync
+        </a>
+    </p>
+
+    <p class="explore-content__text">
+        Located minutes from Boro Park.<br>
+        Exact address shared upon booking.
+    </p>
+
+    <button class="cta-btn explore-content__concierge-btn" data-action="open-concierge" type="button">
+        Prefer the concierge?
+    </button>
+</div>

@@ -1,0 +1,34 @@
+name: coresync_app
+description: "CoreSync Private — Universal SPA Remote & AI Concierge"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # HTTP & API
+  http: ^1.4.0
+  flutter_secure_storage: ^9.2.4
+
+  # State management
+  provider: ^6.1.5
+
+  # Biometric authentication (Face ID / fingerprint)
+  local_auth: ^2.3.0
+
+  # Google Fonts
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
