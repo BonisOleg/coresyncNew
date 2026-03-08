@@ -6,31 +6,34 @@ services:
     name: coresync-private
     runtime: python
     plan: starter
-    buildCommand: |
-      pip install -r requirements.txt
-      python manage.py collectstatic --noinput
-      python manage.py migrate --noinput
-    startCommand: gunicorn project.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+    buildCommand: './build.sh'
+    startCommand: 'python -m gunicorn project.asgi:application -k uvicorn.workers.UvicornWorker'
     envVars:
+      - key: PYTHON_VERSION
+        value: "3.13.5"
       - key: DJANGO_SETTINGS_MODULE
         value: project.settings.production
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
         value: "False"
+      - key: WEB_CONCURRENCY
+        value: "4"
       - key: ALLOWED_HOSTS
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
         sync: false
       - key: DATABASE_URL
         fromDatabase:
           name: coresync-db
           property: connectionString
-      - key: PYTHON_VERSION
-        value: "3.13.5"
-      # Gemini
+      # Gemini — verify model name at aistudio.google.com
       - key: GEMINI_API_KEY
         sync: false
       - key: GEMINI_MODEL
-        value: gemini-3-flash
+        value: gemini-2.0-flash
       # Atlas.AI
       - key: ATLAS_API_KEY
         sync: false
@@ -59,6 +62,8 @@ services:
         sync: false
       - key: DEFAULT_FROM_EMAIL
         sync: false
+      - key: EMAIL_USE_TLS
+        value: "True"
       # Stripe (prepared)
       - key: STRIPE_SECRET_KEY
         sync: false

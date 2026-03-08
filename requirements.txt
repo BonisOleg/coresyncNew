@@ -1,5 +1,6 @@
 annotated-types==0.7.0
 anyio==4.12.1
+brotli==1.2.0
 argon2-cffi==25.1.0
 argon2-cffi-bindings==25.1.0
 asgiref==3.11.1
@@ -21,6 +22,7 @@ Faker==40.4.0
 google-auth==2.48.0
 google-genai==1.62.0
 gunicorn==25.0.3
+uvicorn==0.41.0
 h11==0.16.0
 httpcore==1.0.9
 httpx==0.28.1
@@ -51,3 +53,4 @@ typing-inspection==0.4.2
 typing_extensions==4.15.0
 urllib3==2.6.3
 websockets==15.0.1
+whitenoise==6.12.0
