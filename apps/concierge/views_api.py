@@ -17,6 +17,7 @@ from apps.guests.utils import get_guest_from_token
 from .engine import process_message
 from .models import Conversation, Message
 from .serializers import ChatMessageInputSerializer, ConversationSerializer, MessageSerializer
+from .utils import is_rate_limited
 
 
 class ConciergeMessageAPIView(APIView):
@@ -53,6 +54,13 @@ class ConciergeMessageAPIView(APIView):
             content=user_text,
             metadata={"action": action} if action else {},
         )
+
+        # Per-session rate limiting
+        if is_rate_limited(session_id):
+            return Response(
+                {"detail": "Too many requests. Please wait a moment."},
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
 
         # Process through Gemini engine
         response_data = process_message(conversation, user_text)

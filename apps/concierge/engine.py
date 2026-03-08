@@ -1,5 +1,5 @@
 """
-Gemini 3 Flash concierge engine.
+Gemini concierge engine.
 Handles conversation with the AI, action parsing, and response generation.
 """
 
@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import json
 import logging
+import re
+import time
 from datetime import date, timedelta
 from typing import Any
 
@@ -83,7 +85,7 @@ def _build_context(conversation: Conversation) -> str:
     return "\n\n".join(parts)
 
 
-def _get_conversation_history(conversation: Conversation) -> list[dict[str, str]]:
+def _get_conversation_history(conversation: Conversation) -> list[dict[str, Any]]:
     """Get message history formatted for the Gemini API."""
     messages = conversation.messages.order_by("created_at")[:50]
     history = []
@@ -124,6 +126,14 @@ def _clean_response(response_text: str) -> str:
         return response_text.strip()
 
 
+def _extract_retry_delay(error_message: str) -> float:
+    """Extract retry delay in seconds from a 429 error message."""
+    match = re.search(r"retry in (\d+(?:\.\d+)?)s", str(error_message))
+    if match:
+        return min(float(match.group(1)), 30.0)
+    return 5.0
+
+
 def _handle_action(action: dict[str, Any], conversation: Conversation) -> dict[str, Any]:
     """Execute a parsed action and return metadata for the response."""
     from .actions import execute_action
@@ -133,17 +143,16 @@ def _handle_action(action: dict[str, Any], conversation: Conversation) -> dict[s
 
 def process_message(conversation: Conversation, user_message: str) -> dict[str, Any]:
     """
-    Process a user message through Gemini 3 Flash and return the response.
+    Process a user message through Gemini and return the response.
     Returns dict with 'content' (str) and 'metadata' (dict).
     """
     api_key = settings.GEMINI_API_KEY
     model_name = settings.GEMINI_MODEL
 
-    # Build the full prompt
+    # Build the full system instruction
     context = _build_context(conversation)
     full_system = f"{SYSTEM_PROMPT}\n\n--- Current Context ---\n{context}"
 
-    # If Gemini API key is not configured, return a fallback
     if not api_key:
         logger.warning("GEMINI_API_KEY not configured; using fallback response.")
         return {
@@ -156,23 +165,35 @@ def process_message(conversation: Conversation, user_message: str) -> dict[str, 
 
     try:
         from google import genai
+        from google.genai import types
+        from google.genai.errors import ClientError
 
         client = genai.Client(api_key=api_key)
-
-        # Build conversation history
         history = _get_conversation_history(conversation)
 
-        # Call Gemini
-        response = client.models.generate_content(
-            model=model_name,
-            contents=[
-                {"role": "user", "parts": [{"text": full_system}]},
-                *history,
-                {"role": "user", "parts": [{"text": user_message}]},
-            ],
-        )
+        def _call_api() -> str:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=[
+                    *history,
+                    {"role": "user", "parts": [{"text": user_message}]},
+                ],
+                config=types.GenerateContentConfig(
+                    system_instruction=full_system,
+                ),
+            )
+            return response.text or ""
 
-        response_text = response.text or ""
+        try:
+            response_text = _call_api()
+        except ClientError as exc:
+            if exc.status_code == 429:
+                delay = _extract_retry_delay(str(exc))
+                logger.warning("Gemini 429 — retrying after %.1fs: %s", delay, exc)
+                time.sleep(delay)
+                response_text = _call_api()
+            else:
+                raise
 
         # Parse action if present
         action = _parse_action(response_text)
@@ -188,6 +209,15 @@ def process_message(conversation: Conversation, user_message: str) -> dict[str, 
         }
 
     except Exception as exc:
+        from google.genai.errors import ClientError
+
+        if isinstance(exc, ClientError) and exc.status_code == 429:
+            logger.warning("Gemini quota exhausted (429): %s", exc)
+            return {
+                "content": "I'll be right with you — just a moment, please.",
+                "metadata": {"rate_limited": True},
+            }
+
         logger.error("Gemini API error: %s", exc, exc_info=True)
         return {
             "content": "I appreciate your patience. Let me reconnect — could you try again in a moment?",

@@ -14,6 +14,7 @@ from django.views.decorators.http import require_POST
 
 from .engine import process_message
 from .models import Conversation, Message
+from .utils import is_rate_limited
 
 logger = logging.getLogger(__name__)
 
@@ -101,6 +102,20 @@ def concierge_message(request: HttpRequest) -> HttpResponse:
         content=effective_message,
         metadata={"action": action} if action else {},
     )
+
+    # Per-session rate limiting
+    if is_rate_limited(session_id):
+        throttle_msg = Message.objects.create(
+            conversation=conversation,
+            role=Message.Role.ASSISTANT,
+            content="Just a moment — give me a breath before we continue.",
+            metadata={"rate_limited": True},
+        )
+        return render(request, "website/partials/chat_message.html", {
+            "user_message": user_msg,
+            "assistant_message": throttle_msg,
+            "metadata": {"rate_limited": True},
+        })
 
     # Process through Gemini engine
     response_data = process_message(conversation, effective_message)
