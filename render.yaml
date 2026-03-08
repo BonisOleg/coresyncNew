@@ -78,5 +78,5 @@ services:
 
 databases:
   - name: coresync-db
-    plan: starter
+    plan: free
     databaseName: coresync
