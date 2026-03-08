@@ -20,6 +20,11 @@
         max-width: 90px;
     }
 
+    body.is-panel-open .room-logo {
+        opacity: 0;
+        pointer-events: none;
+    }
+
     .room-explore-btn {
         top: var(--space-md);
         right: var(--space-md);
