@@ -63,6 +63,22 @@ def explore_contact(request: HttpRequest) -> HttpResponse:
 
 
 # ---------------------------------------------------------------------------
+# Legal pages (required by App Store & Google Play)
+# ---------------------------------------------------------------------------
+
+
+def privacy_policy(request: HttpRequest) -> HttpResponse:
+    """Privacy policy page — required for app store submissions."""
+    return render(request, "website/privacy.html")
+
+
+def support_page(request: HttpRequest) -> HttpResponse:
+    """Support page — required for app store submissions."""
+    context = {"whatsapp_number": settings.WHATSAPP_NUMBER}
+    return render(request, "website/support.html", context)
+
+
+# ---------------------------------------------------------------------------
 # Healthcheck
 # ---------------------------------------------------------------------------
 

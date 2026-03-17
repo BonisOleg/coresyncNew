@@ -1,0 +1,33 @@
+<!-- Time slot selection step -->
+<div class="chat-msg chat-msg--assistant">
+    {{ assistant_message.content }}
+
+    <div class="chat-time-slots">
+        {% for slot in ui_data.slots %}
+        <button class="chat-time-slot" type="button"
+                data-time="{{ slot.time_start }}"
+                data-flow-step="select_time">
+            {{ slot.display }}
+        </button>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+(function() {
+    document.querySelectorAll(".chat-time-slot").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            var form = document.getElementById("concierge-form");
+            if (!form) return;
+            form.querySelector("[name='flow_step']").value = "select_time";
+            form.querySelector("[name='time']").value = btn.getAttribute("data-time");
+            form.querySelector("[name='message']").value = btn.textContent.trim();
+            htmx.trigger(form, "submit");
+        });
+    });
+
+    if (window.CoreSync && window.CoreSync.scrollChatToBottom) {
+        window.CoreSync.scrollChatToBottom();
+    }
+})();
+</script>

@@ -1,0 +1,436 @@
+/*
+ * CoreSync Private — Concierge Flow Components
+ * Structured UI for booking, membership, and payment steps.
+ */
+
+/* ── Flow Buttons ─────────────────────────────────────────────────────── */
+
+.chat-flow-btn {
+    display: block;
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    margin-top: var(--space-sm);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    letter-spacing: var(--tracking-wide);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-smooth),
+                opacity var(--duration-fast) var(--ease-smooth);
+}
+
+.chat-flow-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.chat-flow-btn--primary {
+    background-color: rgba(201, 169, 110, 0.15);
+    color: var(--color-accent, #c9a96e);
+    border: 1px solid rgba(201, 169, 110, 0.3);
+}
+
+.chat-flow-btn--primary:hover:not(:disabled) {
+    background-color: rgba(201, 169, 110, 0.25);
+}
+
+.chat-flow-btn--pay {
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+}
+
+.chat-flow-btn--ghost {
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border: var(--glass-border);
+}
+
+.chat-flow-btn--ghost:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Calendar ─────────────────────────────────────────────────────────── */
+
+.chat-calendar {
+    margin-top: var(--space-md);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.chat-calendar .flatpickr-calendar {
+    background: var(--color-surface);
+    border: var(--glass-border);
+    box-shadow: none;
+    width: 100%;
+}
+
+/* ── Time Slots ───────────────────────────────────────────────────────── */
+
+.chat-time-slots {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+.chat-time-slot {
+    display: block;
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-primary);
+    background-color: rgba(255, 255, 255, 0.04);
+    border: var(--glass-border);
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-smooth);
+}
+
+.chat-time-slot:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Experience Tier ──────────────────────────────────────────────────── */
+
+.chat-experience-tiers {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+.chat-tier-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md) var(--space-lg);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-smooth);
+    border: var(--glass-border);
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--color-text-primary);
+}
+
+.chat-tier-card--highlighted {
+    background-color: rgba(201, 169, 110, 0.08);
+    border-color: rgba(201, 169, 110, 0.25);
+}
+
+.chat-tier-card--highlighted .chat-tier-card__label {
+    font-weight: 500;
+}
+
+.chat-tier-card:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.chat-tier-card__label {
+    font-size: var(--text-sm);
+}
+
+.chat-tier-card__price {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-accent, #c9a96e);
+}
+
+.chat-tier-note {
+    margin-top: var(--space-xs);
+    font-size: 11px;
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+/* ── Input Fields ─────────────────────────────────────────────────────── */
+
+.chat-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.chat-input-group__label {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-xs);
+}
+
+.chat-input-group__input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--text-sm);
+    background: rgba(255, 255, 255, 0.04);
+    border: var(--glass-border);
+    border-radius: 8px;
+    color: var(--color-text-primary);
+    box-sizing: border-box;
+}
+
+.chat-input-group__input:focus {
+    outline: none;
+    border-color: rgba(201, 169, 110, 0.4);
+}
+
+.chat-input-group__input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.chat-input-group__actions {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.chat-input-group__actions .chat-flow-btn {
+    flex: 1;
+}
+
+.chat-input-error {
+    margin-top: var(--space-xs);
+    font-size: 12px;
+    color: #e57373;
+}
+
+/* ── Booking Summary ──────────────────────────────────────────────────── */
+
+.chat-summary {
+    margin-top: var(--space-md);
+}
+
+.chat-summary__card {
+    background: rgba(255, 255, 255, 0.03);
+    border: var(--glass-border);
+    border-radius: 10px;
+    padding: var(--space-lg);
+}
+
+.chat-summary__title {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-accent, #c9a96e);
+    margin: 0 0 var(--space-md);
+    text-transform: uppercase;
+}
+
+.chat-summary__row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-xs) 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.chat-summary__row:last-child {
+    border-bottom: none;
+}
+
+.chat-summary__row--total {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: none;
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.chat-summary__terms {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+
+.chat-summary__terms input[type="checkbox"] {
+    margin-top: 2px;
+    accent-color: var(--color-accent, #c9a96e);
+}
+
+.chat-summary__terms a {
+    color: var(--color-accent, #c9a96e);
+    text-decoration: underline;
+}
+
+/* ── Payment ──────────────────────────────────────────────────────────── */
+
+.chat-payment {
+    margin-top: var(--space-md);
+}
+
+.chat-payment__card {
+    padding: var(--space-md);
+    background: rgba(255, 255, 255, 0.03);
+    border: var(--glass-border);
+    border-radius: 8px;
+    min-height: 48px;
+}
+
+.chat-payment__errors {
+    font-size: 12px;
+    color: #e57373;
+    margin-top: var(--space-xs);
+    min-height: 16px;
+}
+
+.chat-payment__loading {
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    padding: var(--space-md);
+}
+
+/* ── Confirmation ─────────────────────────────────────────────────────── */
+
+.chat-confirmation {
+    margin-top: var(--space-md);
+}
+
+.chat-confirmation__card {
+    background: rgba(255, 255, 255, 0.03);
+    border: var(--glass-border);
+    border-radius: 10px;
+    padding: var(--space-lg);
+    text-align: center;
+}
+
+.chat-confirmation__icon {
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    margin: 0 auto var(--space-md);
+    border-radius: 50%;
+    background: rgba(201, 169, 110, 0.15);
+    color: var(--color-accent, #c9a96e);
+    font-size: 24px;
+}
+
+.chat-confirmation__title {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-accent, #c9a96e);
+    margin: 0 0 var(--space-md);
+}
+
+.chat-confirmation__row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-xs) 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-align: left;
+}
+
+.chat-confirmation__row--code {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    letter-spacing: var(--tracking-wider);
+}
+
+.chat-confirmation__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+/* ── Environment Picker ───────────────────────────────────────────────── */
+
+.chat-environment-picker {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+.chat-environment-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-md);
+    border-radius: 10px;
+    border: var(--glass-border);
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-smooth);
+    color: var(--color-text-primary);
+}
+
+.chat-environment-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.chat-environment-card__img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: var(--space-sm);
+    opacity: 0.85;
+}
+
+.chat-environment-card__name {
+    font-size: var(--text-sm);
+    font-weight: 400;
+    letter-spacing: var(--tracking-wide);
+}
+
+/* ── Membership ───────────────────────────────────────────────────────── */
+
+.chat-membership {
+    margin-top: var(--space-md);
+}
+
+.chat-membership__heading {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-accent, #c9a96e);
+    margin: 0 0 var(--space-md);
+}
+
+.chat-membership__benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-md);
+}
+
+.chat-membership__benefits li {
+    position: relative;
+    padding: var(--space-xs) 0 var(--space-xs) var(--space-lg);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+}
+
+.chat-membership__benefits li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--color-accent, #c9a96e);
+}
+
+.chat-membership__scarcity {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--color-accent, #c9a96e);
+    opacity: 0.8;
+    margin-top: var(--space-sm);
+}

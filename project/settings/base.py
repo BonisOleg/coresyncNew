@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     "apps.concierge",
     "apps.atlas_calls",
     "apps.spa_control",
+    "apps.orders",
+    "apps.wallet",
     "apps.website",
     "apps.backyard",
 ]
@@ -241,6 +243,15 @@ STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
 
 WHATSAPP_NUMBER = os.environ.get("WHATSAPP_NUMBER", "")
+
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "")
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "")
+TWILIO_PHONE_NUMBER = os.environ.get("TWILIO_PHONE_NUMBER", "")
+
+CORESYNC_FULL_PRICE = int(os.environ.get("CORESYNC_FULL_PRICE", "350"))
+CORESYNC_BASIC_PRICE = int(os.environ.get("CORESYNC_BASIC_PRICE", "250"))
+
+SITE_URL = os.environ.get("SITE_URL", "https://coresync.com")
 
 # ---------------------------------------------------------------------------
 # Default primary key field type

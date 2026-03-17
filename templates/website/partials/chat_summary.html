@@ -1,0 +1,75 @@
+<!-- Booking summary + terms + pay button -->
+<div class="chat-msg chat-msg--assistant">
+    {{ assistant_message.content }}
+
+    {% if ui_data.error %}
+    <p class="chat-input-error">{{ ui_data.error }}</p>
+    {% endif %}
+
+    <div class="chat-summary">
+        <div class="chat-summary__card">
+            <h4 class="chat-summary__title">CoreSync Private</h4>
+            <div class="chat-summary__row">
+                <span>Date</span>
+                <span>{{ ui_data.date }}</span>
+            </div>
+            <div class="chat-summary__row">
+                <span>Time</span>
+                <span>{{ ui_data.time }}</span>
+            </div>
+            <div class="chat-summary__row">
+                <span>Experience</span>
+                <span>{{ ui_data.experience_tier }}</span>
+            </div>
+            {% if ui_data.food_preference %}
+            <div class="chat-summary__row">
+                <span>Preference</span>
+                <span>{{ ui_data.food_preference }}</span>
+            </div>
+            {% endif %}
+            <div class="chat-summary__row chat-summary__row--total">
+                <span>Total</span>
+                <span>${{ ui_data.price }}</span>
+            </div>
+        </div>
+
+        <label class="chat-summary__terms">
+            <input type="checkbox" id="terms-checkbox">
+            <span>I agree to the
+                <a href="{{ ui_data.terms_url }}" target="_blank" rel="noopener">Terms &amp; Conditions</a>
+                and
+                <a href="{{ ui_data.cancellation_url }}" target="_blank" rel="noopener">Cancellation Policy</a>
+            </span>
+        </label>
+
+        <button class="chat-flow-btn chat-flow-btn--primary chat-flow-btn--pay" type="button"
+                id="chat-summary-pay" disabled>
+            Pay ${{ ui_data.price }}
+        </button>
+    </div>
+</div>
+
+<script>
+(function() {
+    var checkbox = document.getElementById("terms-checkbox");
+    var payBtn = document.getElementById("chat-summary-pay");
+
+    checkbox.addEventListener("change", function() {
+        payBtn.disabled = !checkbox.checked;
+    });
+
+    payBtn.addEventListener("click", function() {
+        if (!checkbox.checked) return;
+        var form = document.getElementById("concierge-form");
+        if (!form) return;
+        form.querySelector("[name='flow_step']").value = "{{ ui_data.submit_flow_step }}";
+        form.querySelector("[name='terms_accepted']").value = "1";
+        form.querySelector("[name='message']").value = "Pay";
+        htmx.trigger(form, "submit");
+    });
+
+    if (window.CoreSync && window.CoreSync.scrollChatToBottom) {
+        window.CoreSync.scrollChatToBottom();
+    }
+})();
+</script>

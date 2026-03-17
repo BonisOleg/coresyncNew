@@ -1,0 +1,47 @@
+<!-- Calendar date picker step -->
+<div class="chat-msg chat-msg--assistant">
+    {{ assistant_message.content }}
+
+    <div class="chat-calendar" id="chat-calendar-widget">
+        <div class="chat-calendar__picker" id="chat-flatpickr"></div>
+    </div>
+
+    <input type="hidden" id="flow-calendar-date" value="">
+    <button class="chat-flow-btn chat-flow-btn--primary" id="chat-calendar-submit" type="button" disabled>
+        Continue
+    </button>
+</div>
+
+<script>
+(function() {
+    var fp = flatpickr("#chat-flatpickr", {
+        inline: true,
+        minDate: "{{ ui_data.min_date }}",
+        maxDate: "{{ ui_data.max_date }}",
+        {% if ui_data.available_dates %}
+        enable: [{% for d in ui_data.available_dates %}"{{ d }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+        {% endif %}
+        dateFormat: "Y-m-d",
+        theme: "dark",
+        onChange: function(selectedDates, dateStr) {
+            document.getElementById("flow-calendar-date").value = dateStr;
+            document.getElementById("chat-calendar-submit").disabled = false;
+        }
+    });
+
+    document.getElementById("chat-calendar-submit").addEventListener("click", function() {
+        var dateVal = document.getElementById("flow-calendar-date").value;
+        if (!dateVal) return;
+        var form = document.getElementById("concierge-form");
+        if (!form) return;
+        form.querySelector("[name='flow_step']").value = "select_date";
+        form.querySelector("[name='date']").value = dateVal;
+        form.querySelector("[name='message']").value = dateVal;
+        htmx.trigger(form, "submit");
+    });
+
+    if (window.CoreSync && window.CoreSync.scrollChatToBottom) {
+        window.CoreSync.scrollChatToBottom();
+    }
+})();
+</script>

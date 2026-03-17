@@ -9,7 +9,11 @@
                 {% if msg.metadata.buttons %}
                     <div class="chat-buttons">
                         {% for btn in msg.metadata.buttons %}
-                            <button class="chat-btn" data-action="{{ btn.action }}" type="button">
+                            <button class="chat-btn"
+                                    data-action="{{ btn.action }}"
+                                    {% if btn.flow_step %}data-flow-step="{{ btn.flow_step }}"{% endif %}
+                                    {% if btn.value %}data-value="{{ btn.value }}" data-field="{{ btn.field_name }}"{% endif %}
+                                    type="button">
                                 {{ btn.label }}
                             </button>
                         {% endfor %}
@@ -39,6 +43,19 @@
       hx-indicator=".chat-loading">
     {% csrf_token %}
     <input type="hidden" name="action" value="">
+    <input type="hidden" name="flow_step" value="">
+    <input type="hidden" name="date" value="">
+    <input type="hidden" name="time" value="">
+    <input type="hidden" name="first_name" value="">
+    <input type="hidden" name="last_name" value="">
+    <input type="hidden" name="phone" value="">
+    <input type="hidden" name="otp" value="">
+    <input type="hidden" name="email" value="">
+    <input type="hidden" name="experience_tier" value="">
+    <input type="hidden" name="food_preference" value="">
+    <input type="hidden" name="terms_accepted" value="">
+    <input type="hidden" name="scene_id" value="">
+    <input type="hidden" name="booking_id" value="">
     <input class="concierge-input__field"
            type="text"
            name="message"

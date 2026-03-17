@@ -1,0 +1,504 @@
+================================================================================
+CoreSync AI Concierge — Full Product Specification
+================================================================================
+Compiled: March 2026
+Status: Active specification for implementation
+================================================================================
+
+
+================================================================================
+SECTION 1: GENERAL PRINCIPLES
+================================================================================
+
+The AI concierge is the primary interface for booking sessions.
+The experience must feel like a guided concierge conversation, not a traditional form.
+
+Key rules:
+- Ask one thing at a time
+- Use buttons or structured inputs whenever possible
+- Avoid requiring free typing unless necessary
+- Avoid asking multiple questions in one message
+- Keep the background CoreSync room visible behind the AI panel
+- No page redirects — everything happens inside the AI interface
+
+Target booking time: 45–60 seconds
+
+
+================================================================================
+SECTION 2: BOOKING FLOW — STEP BY STEP
+================================================================================
+
+
+--- Step 1 — Initial Greeting ---
+
+AI Message:
+"Welcome to CoreSync Private.
+I'm your concierge. How can I assist you today?"
+
+Buttons:
+• Book a session
+• Explore membership
+• Just exploring
+
+If the user selects "Book a session", continue to Step 2.
+
+
+--- Step 2 — Select Date ---
+
+AI Message:
+"When would you like to visit?"
+
+A calendar picker opens.
+User selects a date.
+After selecting the date, continue to Step 3.
+
+
+--- Step 3 — Select Time ---
+
+AI Message:
+"What time works best for you?"
+
+Display available time slots for the selected date.
+Example:
+• 6:30 PM
+• 8:30 PM
+• 10:30 PM
+
+The system should only show available time slots.
+Users should not type times manually.
+
+
+--- Step 3.5 — Experience Tier Selection ---
+
+After time selection:
+
+AI message:
+"Your session includes the Full CoreSync Experience, prepared with food and refreshments."
+
+Buttons:
+• Full Experience — $X
+• Experience without food — $Y
+
+Small text below:
+"Members receive preferred pricing."
+
+Design rules:
+- Full experience appears first
+- Slight visual emphasis (bolder or highlighted)
+- The cheaper option appears slightly more neutral
+
+If Full Experience is selected:
+
+AI:
+"Would you prefer dairy or meat for your visit?"
+
+Buttons:
+• Dairy
+• Meat
+
+Then continue booking.
+
+
+--- Step 4 — Guest Name ---
+
+AI Message:
+"What name should I reserve the session under?"
+
+Input fields:
+- First Name
+- Last Name
+
+Button:
+Continue
+
+
+--- Step 5 — Phone Number & Verification ---
+
+AI Message:
+"What phone number should I send your confirmation to?"
+
+Input field:
+- Phone number
+
+After submission:
+System sends SMS verification code.
+
+AI Message:
+"Enter the 6-digit code I just sent."
+
+Input field:
+- Verification code
+
+Purpose:
+- confirm identity
+- allow recognition for future bookings
+
+
+--- Step 6 — Optional Email ---
+
+AI Message:
+"Would you like your confirmation and receipt sent to an email as well?"
+
+Input field:
+- Email address
+
+Buttons:
+• Add Email
+• Skip
+
+Email is optional.
+If provided, it will be used for:
+- confirmation email
+- receipt
+- calendar invitation
+
+
+--- Step 7 — Booking Summary, Terms & Payment ---
+
+AI Message:
+"You're reserving CoreSync Private for:"
+
+Display booking summary:
+- CoreSync Private
+- Date
+- Time
+- Duration
+- Price
+
+Below that:
+☑ I agree to the Terms & Conditions and Cancellation Policy
+
+Links:
+- Terms & Conditions
+- Cancellation Policy
+
+Then the Pay button.
+
+Payment options:
+• Pay with Card
+• Apple Pay / Google Pay (if available)
+
+Payment must be processed through a secure payment provider (ex: Stripe).
+
+Optional message after payment:
+"Would you like me to remember this card for faster booking next time?"
+
+If accepted:
+- store payment token securely through the payment processor.
+
+
+--- Step 8 — Booking Confirmation ---
+
+AI Message:
+"Your session is confirmed."
+
+Display:
+- Session Details
+- Date
+- Time
+- Confirmation number
+
+Buttons:
+• Add to Calendar
+• View Membership
+• Done
+
+If email was provided:
+Send:
+- confirmation email
+- receipt
+- calendar file (.ics)
+
+SMS confirmation should also be sent to the verified phone number.
+
+
+--- Step 8.5 — Environment Selection (Post-Confirmation) ---
+
+After payment confirmation the AI says:
+"Your session is confirmed.
+Would you like to select the environment for your visit?"
+
+Then show options like:
+• Italy
+• Japan
+• Iceland
+(These correspond to the screen environments / scenes.)
+
+User taps one.
+
+AI confirms:
+"Perfect. Your environment is set to Italy.
+You can change it anytime before your visit."
+
+If they do nothing:
+Default scene loads.
+
+
+--- Step 8.6 — WhatsApp Contact ---
+
+After booking confirmation, provide:
+Link to WhatsApp for contact support if needed.
+
+NOTE: No separate "contact section" exists. WhatsApp link is ONLY shown after booking.
+
+
+================================================================================
+SECTION 3: RETURNING GUEST FLOW
+================================================================================
+
+If the phone number already exists:
+
+AI Message:
+"Welcome back, [First Name].
+Would you like to book the same experience as last time?"
+
+Buttons:
+• Same time again
+• Choose new time
+
+This enables faster repeat bookings.
+
+
+================================================================================
+SECTION 4: PRE-SESSION SMS REMINDER
+================================================================================
+
+1–2 hours before the session the system sends SMS:
+"Your CoreSync session begins soon.
+Would you like to set your environment?"
+
+Link opens AI again (concierge interface).
+This builds anticipation.
+
+
+================================================================================
+SECTION 5: MEMBERSHIP FLOW
+================================================================================
+
+
+--- 5.1 Membership Upsell Moments ---
+
+The AI should behave like a luxury concierge, not a pushy salesperson.
+Three ideal moments to present membership:
+
+MOMENT 1 — During Exploration:
+User asks questions like: "how does it work?" / "how often can I come?"
+AI replies with subtle positioning:
+"Many guests choose membership because it guarantees priority access and preferred booking windows."
+Then offer:
+• Learn about membership
+• Book a session first
+
+MOMENT 2 — After Booking:
+This is the highest conversion moment.
+After confirmation:
+"Members receive priority booking and preferred access to CoreSync Private.
+Would you like to explore membership?"
+Buttons:
+• View membership
+• Maybe later
+(People who already booked are much more likely to convert.)
+
+MOMENT 3 — Returning Guests:
+If the system recognizes a returning guest:
+"Welcome back, [Name].
+Guests who visit regularly often choose membership for priority access."
+Buttons:
+• Show membership
+• Book session
+
+
+--- 5.2 AI Sales Philosophy ---
+
+The AI should NEVER say:
+"Buy membership."
+
+Instead say:
+"Many guests choose membership…"
+"Members receive…"
+"Would you like to explore…"
+
+This feels premium and non-pushy.
+
+
+--- 5.3 Membership Teaser (Pre-Click) ---
+
+On the page itself (before clicking membership), show this small teaser:
+"CoreSync Private Club
+Priority access and privileges for returning couples.
+Founding memberships limited to 100."
+
+This teaser alone will make people curious.
+
+
+--- 5.4 Full Membership Flow ---
+
+STEP 1 — When the user clicks "Membership":
+
+AI:
+"CoreSync Private Club is designed for couples who plan to return and want priority access to the CoreSync experience.
+Would you like me to briefly explain how membership works?"
+
+Buttons:
+• Yes, show me
+• Maybe later
+
+STEP 2 — Membership Reveal:
+
+If they click Yes:
+
+AI:
+"Membership gives couples preferred access and privileges at CoreSync."
+
+Then display the key benefits:
+Members receive:
+• 1 Essential Ritual included each year
+• Preferred member session rates
+• Priority booking access for high-demand times
+• Access to the CoreSync app to personalize the experience
+• One complimentary house bottle during each visit
+• Preferred pricing on premium bottles, cigars, and ritual gifts
+• $250 birthday credit each year
+• Guest booking privilege
+• Early access to new CoreSync experiences and the backyard
+
+Then the scarcity line:
+"Founding Membership is limited to the first 100 couples."
+
+STEP 3 — Price Reveal:
+
+AI:
+"Annual membership is $2,200."
+
+Then immediately reinforce value:
+"Many members recover the cost of membership within their first few visits while gaining priority access to the experience."
+
+STEP 4 — Soft Invitation:
+
+AI:
+"Would you like me to reserve a CoreSync membership for you?"
+
+Buttons:
+• Yes, reserve membership
+• I want to learn more
+• Not right now
+
+STEP 5 — If They Click "Learn More":
+
+AI:
+"Members typically join because they plan to visit multiple times and want priority booking access, preferred pricing, and personalized control of the experience through the CoreSync app."
+
+Then:
+"Founding memberships are limited to 100 couples."
+
+Buttons:
+• Reserve membership
+• Continue browsing
+
+STEP 6 — If They Click "Reserve Membership":
+
+AI:
+"Would you like to activate membership today or add it when booking your first experience?"
+
+Buttons:
+• Activate membership now
+• Add it to my booking
+
+
+================================================================================
+SECTION 6: IMAGE GALLERY INTERACTION
+================================================================================
+
+If someone asks for pictures:
+
+User asks:
+"Can I see the space?"
+
+AI replies:
+"Of course. Here is a glimpse of CoreSync Private."
+
+Then show 3–4 curated photos.
+
+AI immediately continues:
+"Would you like to reserve a session?"
+
+Buttons:
+• Book a session
+• Tell me more
+• Explore membership
+
+This keeps momentum.
+
+
+================================================================================
+SECTION 7: INTERFACE INTERACTION RULES
+================================================================================
+
+The AI interface must support three interaction types:
+
+1. Buttons — for predictable choices
+2. Structured inputs — for personal data (name, phone, email, verification code)
+3. Free typing — only for open-ended questions
+
+Each step should prioritize structured interaction over typing.
+
+
+================================================================================
+SECTION 8: PAYMENT SECURITY
+================================================================================
+
+Credit card details must never be stored by the website directly.
+
+Use a payment processor (ex: Stripe) that provides:
+- secure checkout
+- tokenized card storage
+- Apple Pay / Google Pay support
+
+
+================================================================================
+SECTION 9: IDENTITY & REBOOKING
+================================================================================
+
+No user accounts or passwords are required (for web).
+Returning guests are recognized via:
+- phone number
+- SMS verification code
+
+This allows fast rebooking without logins.
+
+
+================================================================================
+SECTION 10: FLUTTER APP FEATURES
+================================================================================
+
+The app needs to control the following:
+1. Screen scenes and music add-on (if they want)
+2. Scent control
+3. Checking in
+4. Order add-ons (whiskey, flowers, etc.) with a message like "happy birthday" etc.
+5. Booking
+6. Session timer
+7. Payment wallet
+
+Basics — these are already partially implemented in the codebase.
+
+
+================================================================================
+SECTION 11: UI/UX NOTES
+================================================================================
+
+- The main homepage: when you scroll the wording is changing — needs to change faster when scrolling (currently too slow)
+- Overall website looks great
+- Minor comments expected but mainly everything is here for the website
+- Ready to move forward with the app
+
+
+================================================================================
+SECTION 12: FINAL GOAL
+================================================================================
+
+The booking experience should feel like:
+"A calm, intelligent concierge guiding a guest through a reservation."
+
+No forms. No redirects. Just a conversation with structured inputs.
+Target: 45–60 seconds from start to payment confirmation.

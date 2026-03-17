@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Booking, BookingSlot
+from .models import Booking, BookingSlot, CheckIn
 
 
 @admin.register(BookingSlot)
@@ -38,3 +38,11 @@ class BookingAdmin(admin.ModelAdmin):
         ),
         ("Timestamps", {"fields": ("created_at", "updated_at")}),
     )
+
+
+@admin.register(CheckIn)
+class CheckInAdmin(admin.ModelAdmin):
+    list_display = ("guest", "booking", "status", "checked_in_at", "checked_out_at")
+    list_filter = ("status",)
+    raw_id_fields = ("guest", "booking")
+    readonly_fields = ("checked_in_at",)

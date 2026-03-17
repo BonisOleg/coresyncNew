@@ -12,12 +12,18 @@ dependencies:
 
   cupertino_icons: ^1.0.8
 
+  # State management
+  flutter_riverpod: ^2.6.1
+
+  # Routing
+  go_router: ^17.1.0
+
   # HTTP & API
-  http: ^1.4.0
+  dio: ^5.7.0
   flutter_secure_storage: ^9.2.4
 
-  # State management
-  provider: ^6.1.5
+  # Payments
+  flutter_stripe: ^12.3.0
 
   # Biometric authentication (Face ID / fingerprint)
   local_auth: ^2.3.0
@@ -25,10 +31,23 @@ dependencies:
   # Google Fonts
   google_fonts: ^6.2.1
 
+  # Formatting
+  intl: ^0.20.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
+  flutter_native_splash: ^2.4.6
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
+
+flutter_native_splash:
+  color: "#0A0A0A"
 
 flutter:
   uses-material-design: true

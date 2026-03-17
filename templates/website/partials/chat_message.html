@@ -3,10 +3,25 @@
 <div class="chat-msg chat-msg--assistant">
     {{ assistant_message.content }}
 
-    {% if metadata.buttons %}
+    {% if ui_data.buttons %}
+        <div class="chat-buttons">
+            {% for btn in ui_data.buttons %}
+                <button class="chat-btn"
+                        data-action="{{ btn.action }}"
+                        {% if btn.flow_step %}data-flow-step="{{ btn.flow_step }}"{% endif %}
+                        {% if btn.value %}data-value="{{ btn.value }}" data-field="{{ btn.field_name }}"{% endif %}
+                        type="button">
+                    {{ btn.label }}
+                </button>
+            {% endfor %}
+        </div>
+    {% elif metadata.buttons %}
         <div class="chat-buttons">
             {% for btn in metadata.buttons %}
-                <button class="chat-btn" data-action="{{ btn.action }}" type="button">
+                <button class="chat-btn"
+                        data-action="{{ btn.action }}"
+                        {% if btn.flow_step %}data-flow-step="{{ btn.flow_step }}"{% endif %}
+                        type="button">
                     {{ btn.label }}
                 </button>
             {% endfor %}

@@ -1,69 +1,107 @@
-/// SPA device model matching the Django Device model.
 class DeviceType {
-  final String id;
+  final int id;
   final String name;
-  final Map<String, dynamic> capabilities;
+  final List<String> capabilities;
 
-  DeviceType({
+  const DeviceType({
     required this.id,
     required this.name,
-    this.capabilities = const {},
+    required this.capabilities,
   });
 
   factory DeviceType.fromJson(Map<String, dynamic> json) {
     return DeviceType(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      capabilities: json['capabilities'] ?? {},
+      id: json['id'] as int,
+      name: json['name'] as String? ?? '',
+      capabilities: (json['capabilities'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'capabilities': capabilities,
+    };
   }
 }
 
 class Device {
-  final String id;
+  final int id;
   final DeviceType deviceType;
   final String name;
   final String room;
   final Map<String, dynamic> currentState;
   final bool isOnline;
 
-  Device({
+  const Device({
     required this.id,
     required this.deviceType,
     required this.name,
-    this.room = '',
-    this.currentState = const {},
-    this.isOnline = false,
+    required this.room,
+    required this.currentState,
+    required this.isOnline,
   });
 
   factory Device.fromJson(Map<String, dynamic> json) {
     return Device(
-      id: json['id'] ?? '',
-      deviceType: DeviceType.fromJson(json['device_type'] ?? {}),
-      name: json['name'] ?? '',
-      room: json['room'] ?? '',
-      currentState: Map<String, dynamic>.from(json['current_state'] ?? {}),
-      isOnline: json['is_online'] ?? false,
+      id: json['id'] as int,
+      deviceType:
+          DeviceType.fromJson(json['device_type'] as Map<String, dynamic>),
+      name: json['name'] as String? ?? '',
+      room: json['room'] as String? ?? '',
+      currentState: (json['current_state'] as Map<String, dynamic>?) ??
+          <String, dynamic>{},
+      isOnline: json['is_online'] as bool? ?? false,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'device_type': deviceType.toJson(),
+      'name': name,
+      'room': room,
+      'current_state': currentState,
+      'is_online': isOnline,
+    };
   }
 }
 
 class GuestPreset {
-  final String id;
+  final int id;
   final String name;
   final Map<String, dynamic> settings;
+  final DateTime createdAt;
 
-  GuestPreset({
+  const GuestPreset({
     required this.id,
     required this.name,
-    this.settings = const {},
+    required this.settings,
+    required this.createdAt,
   });
 
   factory GuestPreset.fromJson(Map<String, dynamic> json) {
     return GuestPreset(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      settings: json['settings'] ?? {},
+      id: json['id'] as int,
+      name: json['name'] as String? ?? '',
+      settings:
+          (json['settings'] as Map<String, dynamic>?) ?? <String, dynamic>{},
+      createdAt: DateTime.parse(
+        json['created_at'] as String? ?? DateTime.now().toIso8601String(),
+      ),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'settings': settings,
+      'created_at': createdAt.toIso8601String(),
+    };
   }
 }

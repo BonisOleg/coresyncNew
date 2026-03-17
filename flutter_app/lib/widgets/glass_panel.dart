@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
 
-/// Glass-morphism panel widget matching the website's glass panel aesthetic.
 class GlassPanel extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -24,9 +23,9 @@ class GlassPanel extends StatelessWidget {
         child: Container(
           padding: padding ?? const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: CoreSyncTheme.glassColor.withAlpha(200),
+            color: CoreSyncColors.glass.withAlpha(200),
             borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(color: CoreSyncTheme.glassBorder),
+            border: Border.all(color: CoreSyncColors.glassBorder),
           ),
           child: child,
         ),

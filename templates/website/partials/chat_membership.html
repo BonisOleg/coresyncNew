@@ -1,0 +1,42 @@
+<!-- Membership benefits reveal step -->
+<div class="chat-msg chat-msg--assistant">
+    {{ assistant_message.content }}
+
+    <div class="chat-membership">
+        <h4 class="chat-membership__heading">Members receive:</h4>
+        <ul class="chat-membership__benefits">
+            {% for benefit in ui_data.benefits %}
+            <li>{{ benefit }}</li>
+            {% endfor %}
+        </ul>
+
+        {% if ui_data.scarcity_line %}
+        <p class="chat-membership__scarcity">{{ ui_data.scarcity_line }}</p>
+        {% endif %}
+
+        {% if ui_data.next_flow_step %}
+        <button class="chat-flow-btn chat-flow-btn--primary" type="button"
+                data-flow-step="{{ ui_data.next_flow_step }}">
+            Continue
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+(function() {
+    document.querySelectorAll(".chat-membership [data-flow-step]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            var form = document.getElementById("concierge-form");
+            if (!form) return;
+            form.querySelector("[name='flow_step']").value = btn.getAttribute("data-flow-step");
+            form.querySelector("[name='message']").value = btn.textContent.trim();
+            htmx.trigger(form, "submit");
+        });
+    });
+
+    if (window.CoreSync && window.CoreSync.scrollChatToBottom) {
+        window.CoreSync.scrollChatToBottom();
+    }
+})();
+</script>

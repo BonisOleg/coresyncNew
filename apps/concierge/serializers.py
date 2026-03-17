@@ -23,6 +23,8 @@ class ConversationSerializer(serializers.ModelSerializer):
 
 
 class ChatMessageInputSerializer(serializers.Serializer):
-    message = serializers.CharField(max_length=2000)
+    message = serializers.CharField(max_length=2000, required=False, allow_blank=True, default="")
     session_id = serializers.CharField(max_length=255, required=False)
     action = serializers.CharField(max_length=50, required=False, allow_blank=True)
+    flow_step = serializers.CharField(max_length=50, required=False, allow_blank=True, default="")
+    flow_data = serializers.JSONField(required=False, default=dict)

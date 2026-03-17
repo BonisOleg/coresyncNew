@@ -24,6 +24,8 @@ urlpatterns = [
     path("api/atlas/", include("apps.atlas_calls.urls_api")),
     path("api/calcom/", include("apps.bookings.urls_calcom")),
     path("api/spa/", include("apps.spa_control.urls_api")),
+    path("api/orders/", include("apps.orders.urls_api")),
+    path("api/wallet/", include("apps.wallet.urls_api")),
     path("api/admin/", include("apps.guests.urls_api_admin")),
     # Healthcheck
     path("healthz/", include("apps.website.urls_health")),

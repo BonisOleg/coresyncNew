@@ -1,0 +1,65 @@
+<!-- Booking confirmation step -->
+<div class="chat-msg chat-msg--assistant">
+    {{ assistant_message.content }}
+
+    <div class="chat-confirmation">
+        <div class="chat-confirmation__card">
+            <div class="chat-confirmation__icon">&#10003;</div>
+            <h4 class="chat-confirmation__title">Session Confirmed</h4>
+            <div class="chat-confirmation__row">
+                <span>Date</span>
+                <span>{{ ui_data.date }}</span>
+            </div>
+            <div class="chat-confirmation__row">
+                <span>Time</span>
+                <span>{{ ui_data.time }}</span>
+            </div>
+            <div class="chat-confirmation__row">
+                <span>Experience</span>
+                <span>{{ ui_data.experience_tier }}</span>
+            </div>
+            <div class="chat-confirmation__row chat-confirmation__row--code">
+                <span>Confirmation</span>
+                <span>{{ ui_data.confirmation_number }}</span>
+            </div>
+        </div>
+
+        <div class="chat-confirmation__actions">
+            <button class="chat-flow-btn chat-flow-btn--primary" type="button"
+                    data-flow-step="environment"
+                    data-booking-id="{{ ui_data.booking_id }}">
+                Select Environment
+            </button>
+            <button class="chat-flow-btn chat-flow-btn--ghost" type="button"
+                    data-flow-step="start_membership">
+                View Membership
+            </button>
+            {% if ui_data.whatsapp_url %}
+            <a href="{{ ui_data.whatsapp_url }}" class="chat-flow-btn chat-flow-btn--ghost"
+               target="_blank" rel="noopener">
+                Contact via WhatsApp
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    document.querySelectorAll(".chat-confirmation__actions [data-flow-step]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            var form = document.getElementById("concierge-form");
+            if (!form) return;
+            form.querySelector("[name='flow_step']").value = btn.getAttribute("data-flow-step");
+            var bookingId = btn.getAttribute("data-booking-id");
+            if (bookingId) form.querySelector("[name='booking_id']").value = bookingId;
+            form.querySelector("[name='message']").value = btn.textContent.trim();
+            htmx.trigger(form, "submit");
+        });
+    });
+
+    if (window.CoreSync && window.CoreSync.scrollChatToBottom) {
+        window.CoreSync.scrollChatToBottom();
+    }
+})();
+</script>

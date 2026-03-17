@@ -1,138 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// CoreSync Private — dark cinematic theme matching the website.
-class CoreSyncTheme {
-  static const Color bgColor = Color(0xFF0A0A0A);
-  static const Color surfaceColor = Color(0xFF141414);
-  static const Color glassColor = Color(0xFF1A1A1A);
+class CoreSyncColors {
+  CoreSyncColors._();
+
+  static const Color bg = Color(0xFF0A0A0A);
+  static const Color surface = Color(0xFF141414);
+  static const Color glass = Color(0xFF1A1A1A);
   static const Color glassBorder = Color(0x1AFFFFFF);
   static const Color textPrimary = Color(0xEBFFFFFF);
   static const Color textSecondary = Color(0x8CFFFFFF);
   static const Color textMuted = Color(0x59FFFFFF);
   static const Color accent = Color(0xCCFFFFFF);
+}
 
-  static ThemeData get darkTheme {
+class CoreSyncTheme {
+  CoreSyncTheme._();
+
+  static ThemeData get dark {
+    final textTheme = GoogleFonts.interTextTheme(
+      ThemeData.dark().textTheme,
+    );
+
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: bgColor,
+      scaffoldBackgroundColor: CoreSyncColors.bg,
+      textTheme: textTheme.apply(
+        bodyColor: CoreSyncColors.textPrimary,
+        displayColor: CoreSyncColors.textPrimary,
+      ),
       colorScheme: const ColorScheme.dark(
-        surface: surfaceColor,
-        primary: accent,
-        onPrimary: bgColor,
-        onSurface: textPrimary,
-      ),
-      textTheme: GoogleFonts.interTextTheme(
-        const TextTheme(
-          displayLarge: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.w300,
-            color: textPrimary,
-            letterSpacing: -0.5,
-          ),
-          displayMedium: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w300,
-            color: textPrimary,
-          ),
-          titleLarge: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w400,
-            color: textPrimary,
-            letterSpacing: 0.5,
-          ),
-          titleMedium: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: textPrimary,
-          ),
-          bodyLarge: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: textSecondary,
-            height: 1.6,
-          ),
-          bodyMedium: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w300,
-            color: textSecondary,
-          ),
-          labelLarge: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: textPrimary,
-            letterSpacing: 1.2,
-          ),
-        ),
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: bgColor,
-        elevation: 0,
-        titleTextStyle: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: textSecondary,
-          letterSpacing: 2,
-        ),
+        surface: CoreSyncColors.surface,
+        primary: CoreSyncColors.accent,
+        onPrimary: CoreSyncColors.bg,
+        onSurface: CoreSyncColors.textPrimary,
+        onSurfaceVariant: CoreSyncColors.textSecondary,
+        outline: CoreSyncColors.glassBorder,
       ),
       cardTheme: CardThemeData(
-        color: glassColor,
+        color: CoreSyncColors.glass,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: glassBorder),
+          side: const BorderSide(color: CoreSyncColors.glassBorder),
         ),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: CoreSyncColors.bg,
+        foregroundColor: CoreSyncColors.textPrimary,
         elevation: 0,
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: textPrimary,
-          foregroundColor: bgColor,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w400,
-            letterSpacing: 1.5,
-          ),
+        centerTitle: true,
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          color: CoreSyncColors.textPrimary,
+          fontWeight: FontWeight.w600,
         ),
       ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: textPrimary,
-          side: const BorderSide(color: glassBorder),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: CoreSyncColors.surface,
+        selectedItemColor: CoreSyncColors.accent,
+        unselectedItemColor: CoreSyncColors.textMuted,
+      ),
+      dividerTheme: const DividerThemeData(
+        color: CoreSyncColors.glassBorder,
+        thickness: 1,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0x0AFFFFFF),
+        fillColor: CoreSyncColors.glass,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: glassBorder),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: CoreSyncColors.glassBorder),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: glassBorder),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: CoreSyncColors.glassBorder),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: accent, width: 1),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: CoreSyncColors.accent),
         ),
-        hintStyle: const TextStyle(color: textMuted),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        labelStyle: const TextStyle(color: CoreSyncColors.textSecondary),
+        hintStyle: const TextStyle(color: CoreSyncColors.textMuted),
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: bgColor,
-        selectedItemColor: textPrimary,
-        unselectedItemColor: textMuted,
-        type: BottomNavigationBarType.fixed,
-        elevation: 0,
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: CoreSyncColors.accent,
+          foregroundColor: CoreSyncColors.bg,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          textStyle: textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: CoreSyncColors.accent,
+        ),
       ),
     );
   }

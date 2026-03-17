@@ -63,20 +63,51 @@
         if (!btn) return;
 
         var action = btn.getAttribute("data-action");
+        var flowStep = btn.getAttribute("data-flow-step") || "";
         var label = btn.textContent.trim();
-        if (!action) return;
+        if (!action && !flowStep) return;
 
-        // Set action values in the hidden form
         var form = document.getElementById("concierge-form");
         if (!form) return;
 
         var messageInput = form.querySelector("[name='message']");
         var actionInput = form.querySelector("[name='action']");
+        var flowStepInput = form.querySelector("[name='flow_step']");
 
         if (messageInput) messageInput.value = label;
-        if (actionInput) actionInput.value = action;
+        if (actionInput) actionInput.value = action || "";
 
-        // Trigger HTMX request
+        if (flowStepInput && flowStep) {
+            flowStepInput.value = flowStep;
+            if (actionInput) actionInput.value = "";
+        }
+
+        var valueAttr = btn.getAttribute("data-value");
+        var fieldName = btn.getAttribute("data-field");
+        if (valueAttr && fieldName) {
+            var hiddenField = form.querySelector("[name='" + fieldName + "']");
+            if (hiddenField) hiddenField.value = valueAttr;
+        }
+
         htmx.trigger(form, "submit");
+    });
+
+    // --- Reset flow hidden fields after each submission ---
+    document.addEventListener("htmx:afterRequest", function (e) {
+        var form = e.target.closest("#concierge-form");
+        if (!form) return;
+
+        var flowStep = form.querySelector("[name='flow_step']");
+        if (flowStep) flowStep.value = "";
+
+        var hiddenNames = [
+            "date", "time", "first_name", "last_name", "phone", "otp",
+            "email", "experience_tier", "food_preference", "terms_accepted",
+            "scene_id", "booking_id"
+        ];
+        hiddenNames.forEach(function (name) {
+            var field = form.querySelector("[name='" + name + "']");
+            if (field) field.value = "";
+        });
     });
 })();

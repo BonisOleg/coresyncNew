@@ -1,0 +1,41 @@
+<!-- Environment/scene selection step -->
+<div class="chat-msg chat-msg--assistant">
+    {{ assistant_message.content }}
+
+    <div class="chat-environment-picker">
+        {% for scene in ui_data.scenes %}
+        <button class="chat-environment-card" type="button"
+                data-scene-id="{{ scene.id }}"
+                data-flow-step="environment_confirm">
+            {% if scene.thumbnail_url %}
+            <img class="chat-environment-card__img" src="{{ scene.thumbnail_url }}" alt="{{ scene.name }}" loading="lazy">
+            {% endif %}
+            <span class="chat-environment-card__name">{{ scene.name }}</span>
+        </button>
+        {% endfor %}
+    </div>
+
+    <button class="chat-flow-btn chat-flow-btn--ghost" type="button"
+            data-flow-step="environment_confirm" data-scene-id="">
+        Skip — use default
+    </button>
+</div>
+
+<script>
+(function() {
+    document.querySelectorAll("[data-flow-step='environment_confirm']").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            var form = document.getElementById("concierge-form");
+            if (!form) return;
+            form.querySelector("[name='flow_step']").value = "environment_confirm";
+            form.querySelector("[name='scene_id']").value = btn.getAttribute("data-scene-id") || "";
+            form.querySelector("[name='message']").value = btn.textContent.trim();
+            htmx.trigger(form, "submit");
+        });
+    });
+
+    if (window.CoreSync && window.CoreSync.scrollChatToBottom) {
+        window.CoreSync.scrollChatToBottom();
+    }
+})();
+</script>

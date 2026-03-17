@@ -1,39 +1,62 @@
-/// API configuration for the CoreSync Private backend.
+import 'env.dart';
+
 class ApiConfig {
-  /// Base URL for the Django REST API.
-  /// Change to your Render deployment URL in production.
-  static const String baseUrl = 'http://localhost:8000';
+  ApiConfig._();
 
-  // Auth endpoints
-  static const String loginUrl = '$baseUrl/api/auth/login/';
-  static const String verifyOtpUrl = '$baseUrl/api/auth/verify/';
-  static const String refreshUrl = '$baseUrl/api/auth/refresh/';
+  static String get baseUrl => Env.baseUrl;
 
-  // Guest profile
-  static const String profileUrl = '$baseUrl/api/guest/profile/';
+  // ── Auth ──────────────────────────────────────────────────────────────
+  static const String login = '/api/auth/login/';
+  static const String verify = '/api/auth/verify/';
+  static const String refresh = '/api/auth/refresh/';
 
-  // Bookings
-  static const String bookingsUrl = '$baseUrl/api/bookings/';
+  // ── Guest ─────────────────────────────────────────────────────────────
+  static const String guestProfile = '/api/guest/profile/';
 
-  // Concierge
-  static const String conciergeMessageUrl = '$baseUrl/api/concierge/message/';
-  static const String conciergeHistoryUrl = '$baseUrl/api/concierge/history/';
+  // ── Bookings ──────────────────────────────────────────────────────────
+  static const String bookings = '/api/bookings/';
+  static const String bookingSlots = '/api/bookings/slots/';
+  static const String bookingActive = '/api/bookings/active/';
+  static const String bookingSession = '/api/bookings/session/';
 
-  // SPA control
-  static const String devicesUrl = '$baseUrl/api/spa/devices/';
-  static const String presetsUrl = '$baseUrl/api/spa/presets/';
+  static String bookingDetail(int id) => '/api/bookings/$id/';
+  static String bookingCheckin(int id) => '/api/bookings/$id/checkin/';
+  static String bookingCheckout(int id) => '/api/bookings/$id/checkout/';
 
-  // Admin
-  static const String adminGuestsUrl = '$baseUrl/api/admin/guests/';
-  static const String adminBookingsUrl = '$baseUrl/api/admin/bookings/';
-  static const String adminCallsUrl = '$baseUrl/api/admin/calls/';
-  static const String adminDashboardUrl = '$baseUrl/api/admin/dashboard/';
+  // ── SPA Devices ───────────────────────────────────────────────────────
+  static const String devices = '/api/spa/devices/';
+  static String deviceControl(int id) => '/api/spa/devices/$id/control/';
+  static const String presets = '/api/spa/presets/';
 
-  /// Build device control URL for a specific device.
-  static String deviceControlUrl(String deviceId) =>
-      '$baseUrl/api/spa/devices/$deviceId/control/';
+  // ── Scenes ────────────────────────────────────────────────────────────
+  static const String scenes = '/api/spa/scenes/';
+  static const String scenesActivate = '/api/spa/scenes/activate/';
+  static const String scenesActive = '/api/spa/scenes/active/';
 
-  /// Build booking detail URL.
-  static String bookingDetailUrl(String bookingId) =>
-      '$baseUrl/api/bookings/$bookingId/';
+  // ── Scents ────────────────────────────────────────────────────────────
+  static const String scents = '/api/spa/scents/';
+  static const String scentsActivate = '/api/spa/scents/activate/';
+  static const String scentsActive = '/api/spa/scents/active/';
+
+  // ── Orders ────────────────────────────────────────────────────────────
+  static const String products = '/api/orders/products/';
+  static const String orders = '/api/orders/';
+  static const String ordersCreate = '/api/orders/create/';
+  static String orderDetail(int id) => '/api/orders/$id/';
+
+  // ── Wallet ────────────────────────────────────────────────────────────
+  static const String wallet = '/api/wallet/';
+  static const String walletSetupIntent = '/api/wallet/setup-intent/';
+  static const String walletPaymentMethods = '/api/wallet/payment-methods/';
+  static const String walletPaymentMethodsSave =
+      '/api/wallet/payment-methods/save/';
+  static String walletPaymentMethod(int id) =>
+      '/api/wallet/payment-methods/$id/';
+  static const String walletTopUp = '/api/wallet/top-up/';
+  static const String walletTransactions = '/api/wallet/transactions/';
+  static const String walletPay = '/api/wallet/pay/';
+
+  // ── Concierge ─────────────────────────────────────────────────────────
+  static const String conciergeMessage = '/api/concierge/message/';
+  static const String conciergeHistory = '/api/concierge/history/';
 }

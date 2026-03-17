@@ -1,92 +1,76 @@
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:dio/dio.dart';
+
 import '../config/api_config.dart';
-import '../models/conversation.dart';
-import 'api_service.dart';
+import '../models/chat_message.dart';
+import 'api_client.dart';
 
-/// Service for interacting with the AI concierge via the Django API.
-class ConciergeService extends ChangeNotifier {
-  final ApiService _api = ApiService();
+class ConciergeService {
+  final ApiClient _client;
+  String? _sessionId;
 
-  final List<ChatMessage> _messages = [];
-  String _sessionId = '';
-  bool _isLoading = false;
+  ConciergeService(this._client);
 
-  List<ChatMessage> get messages => List.unmodifiable(_messages);
-  bool get isLoading => _isLoading;
+  String? get sessionId => _sessionId;
 
-  /// Initialize with the welcome message.
-  void initialize() {
-    if (_messages.isEmpty) {
-      _messages.add(ChatMessage(
-        id: 'welcome',
-        role: 'assistant',
-        content:
-            'Welcome. I\'m your CoreSync concierge. '
-            'Are you here to book an evening, explore membership, '
-            'or just feel the space?',
-        metadata: {
-          'buttons': [
-            {'label': 'Book an evening', 'action': 'book'},
-            {'label': 'Explore membership', 'action': 'membership'},
-            {'label': 'Just exploring', 'action': 'explore'},
-          ]
-        },
-      ));
-      notifyListeners();
-    }
+  Future<ChatMessage?> sendMessage(String content) async {
+    return sendFlowMessage(content: content);
   }
 
-  /// Send a message to the concierge.
-  Future<void> sendMessage(String text, {String action = ''}) async {
-    if (text.isEmpty && action.isEmpty) return;
-
-    // Add user message locally
-    _messages.add(ChatMessage(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      role: 'user',
-      content: text.isNotEmpty ? text : action,
-    ));
-    _isLoading = true;
-    notifyListeners();
-
+  Future<ChatMessage?> sendFlowMessage({
+    String content = '',
+    String flowStep = '',
+    Map<String, dynamic> flowData = const {},
+  }) async {
     try {
-      final body = {
-        'message': text.isNotEmpty ? text : action,
-        if (_sessionId.isNotEmpty) 'session_id': _sessionId,
-        if (action.isNotEmpty) 'action': action,
+      final body = <String, dynamic>{
+        'message': content,
+        if (_sessionId != null) 'session_id': _sessionId,
+        if (flowStep.isNotEmpty) 'flow_step': flowStep,
+        if (flowData.isNotEmpty) 'flow_data': flowData,
       };
 
-      final response = await _api.post(ApiConfig.conciergeMessageUrl, body: body);
+      final response = await _client.post(
+        ApiConfig.conciergeMessage,
+        data: body,
+      );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final msg = ChatMessage.fromJson(data['message']);
-        _sessionId = data['session_id'] ?? _sessionId;
-        _messages.add(msg);
-      } else {
-        _messages.add(ChatMessage(
-          id: 'error-${DateTime.now().millisecondsSinceEpoch}',
-          role: 'assistant',
-          content: 'I appreciate your patience. Could you try again?',
-        ));
-      }
-    } catch (e) {
-      _messages.add(ChatMessage(
-        id: 'error-${DateTime.now().millisecondsSinceEpoch}',
-        role: 'assistant',
-        content: 'Connection issue. Please check your network and try again.',
-      ));
+      final data = response.data as Map<String, dynamic>;
+
+      _sessionId = data['session_id'] as String? ?? _sessionId;
+
+      final messageData = data['message'] as Map<String, dynamic>?;
+      if (messageData == null) return null;
+
+      final msg = ChatMessage.fromJson(messageData);
+      return msg;
+    } on DioException {
+      rethrow;
     }
-
-    _isLoading = false;
-    notifyListeners();
   }
 
-  /// Clear conversation.
-  void clear() {
-    _messages.clear();
-    _sessionId = '';
-    notifyListeners();
+  Future<List<ChatMessage>> getHistory() async {
+    try {
+      final response = await _client.get(ApiConfig.conciergeHistory);
+      final data = response.data;
+
+      final List<dynamic> conversations = data is List<dynamic>
+          ? data
+          : (data as Map<String, dynamic>)['results'] as List<dynamic>? ?? [];
+
+      final messages = <ChatMessage>[];
+      for (final conv in conversations) {
+        final convMap = conv as Map<String, dynamic>;
+        final msgList = convMap['messages'] as List<dynamic>? ?? [];
+        for (final m in msgList) {
+          messages.add(ChatMessage.fromJson(m as Map<String, dynamic>));
+        }
+        if (_sessionId == null) {
+          _sessionId = convMap['id'] as String?;
+        }
+      }
+      return messages;
+    } on DioException {
+      return [];
+    }
   }
 }

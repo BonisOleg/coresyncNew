@@ -1,0 +1,47 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support — CoreSync Private</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/legal.css' %}">
+</head>
+<body>
+    <main class="legal-page">
+        <div class="legal-container">
+            <h1>Support</h1>
+
+            <section>
+                <h2>Contact Us</h2>
+                <p>For assistance with your CoreSync experience, bookings, or account, reach out to us:</p>
+                <ul>
+                    <li><strong>Email:</strong> <a href="mailto:support@coresync.com">support@coresync.com</a></li>
+                    {% if whatsapp_number %}
+                    <li><strong>WhatsApp:</strong> <a href="https://wa.me/{{ whatsapp_number }}">+{{ whatsapp_number }}</a></li>
+                    {% endif %}
+                </ul>
+            </section>
+
+            <section>
+                <h2>Frequently Asked Questions</h2>
+
+                <h3>How do I delete my account?</h3>
+                <p>Open the CoreSync app, go to Profile, and tap "Delete Account". This permanently removes all your data.</p>
+
+                <h3>How do I manage my payment methods?</h3>
+                <p>Go to the Wallet tab in the app. You can add, remove, and set default payment methods.</p>
+
+                <h3>How do I cancel a booking?</h3>
+                <p>Open the booking from the Bookings tab and tap "Cancel Booking".</p>
+
+                <h3>Is my payment information secure?</h3>
+                <p>Yes. All payment processing is handled by Stripe, a PCI Level 1 certified payment processor. We never store your full card details.</p>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

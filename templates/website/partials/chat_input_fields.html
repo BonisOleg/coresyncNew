@@ -1,0 +1,90 @@
+<!-- Structured input fields step (name, phone, email, OTP) -->
+<div class="chat-msg chat-msg--assistant">
+    {{ assistant_message.content }}
+
+    {% if ui_data.error %}
+    <p class="chat-input-error">{{ ui_data.error }}</p>
+    {% endif %}
+
+    <div class="chat-input-group">
+        {% for field in ui_data.fields %}
+        <div class="chat-input-group__field">
+            <label class="chat-input-group__label" for="flow-field-{{ field.name }}">{{ field.label }}</label>
+            <input class="chat-input-group__input"
+                   id="flow-field-{{ field.name }}"
+                   type="{{ field.type }}"
+                   name="{{ field.name }}"
+                   {% if field.required %}required{% endif %}
+                   {% if field.maxlength %}maxlength="{{ field.maxlength }}"{% endif %}
+                   autocomplete="off">
+        </div>
+        {% endfor %}
+
+        <div class="chat-input-group__actions">
+            <button class="chat-flow-btn chat-flow-btn--primary" type="button" id="chat-input-submit"
+                    data-flow-step="{{ ui_data.submit_flow_step }}">
+                {{ ui_data.submit_label }}
+            </button>
+            {% if ui_data.skip_label %}
+            <button class="chat-flow-btn chat-flow-btn--ghost" type="button" id="chat-input-skip"
+                    data-flow-step="{{ ui_data.skip_flow_step }}">
+                {{ ui_data.skip_label }}
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var submitBtn = document.getElementById("chat-input-submit");
+    var skipBtn = document.getElementById("chat-input-skip");
+
+    function doSubmit(flowStep) {
+        var form = document.getElementById("concierge-form");
+        if (!form) return;
+        form.querySelector("[name='flow_step']").value = flowStep;
+
+        var fields = document.querySelectorAll(".chat-input-group__input");
+        var msgParts = [];
+        fields.forEach(function(input) {
+            var hiddenField = form.querySelector("[name='" + input.name + "']");
+            if (hiddenField) {
+                hiddenField.value = input.value;
+            }
+            if (input.value) msgParts.push(input.value);
+        });
+
+        form.querySelector("[name='message']").value = msgParts.join(" ");
+        htmx.trigger(form, "submit");
+    }
+
+    if (submitBtn) {
+        submitBtn.addEventListener("click", function() {
+            var allValid = true;
+            document.querySelectorAll(".chat-input-group__input[required]").forEach(function(inp) {
+                if (!inp.value.trim()) { allValid = false; inp.focus(); }
+            });
+            if (!allValid) return;
+            doSubmit(submitBtn.getAttribute("data-flow-step"));
+        });
+    }
+
+    if (skipBtn) {
+        skipBtn.addEventListener("click", function() {
+            doSubmit(skipBtn.getAttribute("data-flow-step"));
+        });
+    }
+
+    var lastInput = document.querySelector(".chat-input-group__input:last-of-type");
+    if (lastInput) {
+        lastInput.addEventListener("keydown", function(e) {
+            if (e.key === "Enter" && submitBtn) submitBtn.click();
+        });
+    }
+
+    if (window.CoreSync && window.CoreSync.scrollChatToBottom) {
+        window.CoreSync.scrollChatToBottom();
+    }
+})();
+</script>

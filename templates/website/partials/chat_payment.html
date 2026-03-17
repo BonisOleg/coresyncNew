@@ -1,0 +1,75 @@
+<!-- Stripe payment step -->
+<div class="chat-msg chat-msg--assistant">
+    {{ assistant_message.content }}
+
+    <div class="chat-payment" id="chat-payment-container">
+        <div id="stripe-card-element" class="chat-payment__card"></div>
+        <div id="stripe-card-errors" class="chat-payment__errors"></div>
+
+        <button class="chat-flow-btn chat-flow-btn--primary chat-flow-btn--pay" type="button"
+                id="chat-stripe-pay">
+            Pay ${{ ui_data.amount }}
+        </button>
+        <div class="chat-payment__loading" id="chat-payment-loading" hidden>
+            Processing payment...
+        </div>
+    </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+(function() {
+    var stripe = Stripe("{{ ui_data.publishable_key }}");
+    var elements = stripe.elements({
+        clientSecret: "{{ ui_data.client_secret }}",
+        appearance: {
+            theme: "night",
+            variables: {
+                colorPrimary: "#c9a96e",
+                colorBackground: "#1a1a1a",
+                colorText: "#e0e0e0",
+                borderRadius: "8px"
+            }
+        }
+    });
+
+    var paymentElement = elements.create("payment");
+    paymentElement.mount("#stripe-card-element");
+
+    var payBtn = document.getElementById("chat-stripe-pay");
+    var loading = document.getElementById("chat-payment-loading");
+    var errors = document.getElementById("stripe-card-errors");
+
+    payBtn.addEventListener("click", async function() {
+        payBtn.disabled = true;
+        loading.hidden = false;
+        errors.textContent = "";
+
+        var result = await stripe.confirmPayment({
+            elements: elements,
+            confirmParams: {
+                return_url: window.location.href
+            },
+            redirect: "if_required"
+        });
+
+        if (result.error) {
+            errors.textContent = result.error.message;
+            payBtn.disabled = false;
+            loading.hidden = true;
+        } else {
+            var form = document.getElementById("concierge-form");
+            if (form) {
+                form.querySelector("[name='flow_step']").value = "confirmation";
+                form.querySelector("[name='booking_id']").value = "{{ ui_data.booking_id }}";
+                form.querySelector("[name='message']").value = "Payment confirmed";
+                htmx.trigger(form, "submit");
+            }
+        }
+    });
+
+    if (window.CoreSync && window.CoreSync.scrollChatToBottom) {
+        window.CoreSync.scrollChatToBottom();
+    }
+})();
+</script>

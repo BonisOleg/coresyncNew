@@ -1,0 +1,39 @@
+<!-- Experience tier selection step -->
+<div class="chat-msg chat-msg--assistant">
+    {{ assistant_message.content }}
+
+    <div class="chat-experience-tiers">
+        {% for tier in ui_data.tiers %}
+        <button class="chat-tier-card {% if tier.highlighted %}chat-tier-card--highlighted{% endif %}"
+                type="button"
+                data-tier="{{ tier.id }}"
+                data-flow-step="experience_tier">
+            <span class="chat-tier-card__label">{{ tier.label }}</span>
+            <span class="chat-tier-card__price">${{ tier.price }}</span>
+        </button>
+        {% endfor %}
+    </div>
+
+    {% if ui_data.note %}
+    <p class="chat-tier-note">{{ ui_data.note }}</p>
+    {% endif %}
+</div>
+
+<script>
+(function() {
+    document.querySelectorAll(".chat-tier-card").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            var form = document.getElementById("concierge-form");
+            if (!form) return;
+            form.querySelector("[name='flow_step']").value = "experience_tier";
+            form.querySelector("[name='experience_tier']").value = btn.getAttribute("data-tier");
+            form.querySelector("[name='message']").value = btn.querySelector(".chat-tier-card__label").textContent.trim();
+            htmx.trigger(form, "submit");
+        });
+    });
+
+    if (window.CoreSync && window.CoreSync.scrollChatToBottom) {
+        window.CoreSync.scrollChatToBottom();
+    }
+})();
+</script>
