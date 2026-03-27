@@ -2,7 +2,7 @@
 
 from django.urls import path
 
-from . import views_api
+from . import views_api, views_webhook
 
 app_name = "bookings_api"
 
@@ -14,4 +14,5 @@ urlpatterns = [
     path("<uuid:pk>/", views_api.BookingDetailView.as_view(), name="detail"),
     path("<uuid:pk>/checkin/", views_api.CheckInView.as_view(), name="checkin"),
     path("<uuid:pk>/checkout/", views_api.CheckOutView.as_view(), name="checkout"),
+    path("webhook/stripe/", views_webhook.stripe_webhook, name="stripe_webhook"),
 ]

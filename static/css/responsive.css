@@ -47,14 +47,16 @@
 
     .concierge-panel {
         width: 100%;
-        height: 100%;
-        /* iOS Safari height fix */
-        height: -webkit-fill-available;
+        height: 100vh;
+        height: 100dvh;
+    }
+
+    .concierge-header {
+        padding-top: calc(var(--space-lg) + env(safe-area-inset-top, 0px));
     }
 
     .concierge-input {
         padding: var(--space-md) var(--space-lg);
-        /* Add padding for iOS home indicator */
         padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
     }
 }

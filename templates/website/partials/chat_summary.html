@@ -17,6 +17,12 @@
                 <span>Time</span>
                 <span>{{ ui_data.time }}</span>
             </div>
+            {% if ui_data.duration %}
+            <div class="chat-summary__row">
+                <span>Duration</span>
+                <span>{{ ui_data.duration }}</span>
+            </div>
+            {% endif %}
             <div class="chat-summary__row">
                 <span>Experience</span>
                 <span>{{ ui_data.experience_tier }}</span>

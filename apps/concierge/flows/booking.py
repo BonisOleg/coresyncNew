@@ -196,10 +196,9 @@ def _experience_tier(
             "next_step": "food_preference",
             "ui_data": {
                 "buttons": [
-                    {"label": "Dairy", "value": "dairy", "flow_step": "food_preference"},
-                    {"label": "Meat", "value": "meat", "flow_step": "food_preference"},
+                    {"label": "Dairy", "value": "dairy", "flow_step": "food_preference", "field_name": "food_preference"},
+                    {"label": "Meat", "value": "meat", "flow_step": "food_preference", "field_name": "food_preference"},
                 ],
-                "field_name": "food_preference",
             },
         }
     return _guest_name(conversation, data)
@@ -356,8 +355,8 @@ def _otp_verify(
             "next_step": "email",
             "ui_data": {
                 "buttons": [
-                    {"label": "Same as last time", "flow_step": "email", "value": "same"},
-                    {"label": "Choose new options", "flow_step": "email", "value": "new"},
+                    {"label": "Same time again", "flow_step": "email", "value": "same"},
+                    {"label": "Choose new time", "flow_step": "start_booking", "value": "new"},
                 ],
             },
             "metadata": {"returning_guest": True},
@@ -394,6 +393,22 @@ def _email_step(
     }
 
 
+def _calculate_duration(time_start: str, time_end: str) -> str:
+    """Calculate human-readable duration between two HH:MM times."""
+    from datetime import datetime
+
+    t1 = datetime.strptime(time_start, "%H:%M")
+    t2 = datetime.strptime(time_end, "%H:%M")
+    diff = t2 - t1
+    if diff.total_seconds() < 0:
+        diff += timedelta(days=1)
+    hours = diff.total_seconds() / 3600
+    if hours == int(hours):
+        h = int(hours)
+        return f"{h} {'hour' if h == 1 else 'hours'}"
+    return f"{hours:.1f} hours"
+
+
 def _summary(
     conversation: Conversation, data: dict[str, Any]
 ) -> dict[str, Any]:
@@ -407,6 +422,9 @@ def _summary(
             guest.email = data["email"]
             guest.save(update_fields=["email"])
 
+    time_start = data.get("time", "18:00")
+    duration = _calculate_duration(time_start, "23:00")
+
     return {
         "content": "You're reserving CoreSync Private for:",
         "message_type": "summary",
@@ -414,7 +432,8 @@ def _summary(
         "next_step": "summary",
         "ui_data": {
             "date": data.get("date", ""),
-            "time": data.get("time", ""),
+            "time": time_start,
+            "duration": duration,
             "experience_tier": "Full Experience" if tier == "full" else "Experience without food",
             "food_preference": data.get("food_preference", ""),
             "price": price,
@@ -431,10 +450,11 @@ def _payment_confirm(
 ) -> dict[str, Any]:
     """Step 7 cont: Process payment and create booking."""
     if not data.get("terms_accepted"):
+        summary_result = _summary(conversation, data)
         return {
-            **_summary(conversation, data),
+            **summary_result,
             "ui_data": {
-                **_summary(conversation, data)["ui_data"],
+                **summary_result["ui_data"],
                 "error": "Please agree to the Terms & Conditions to continue.",
             },
         }
@@ -551,6 +571,21 @@ def _confirmation(
         booking.generate_confirmation_number()
 
     if booking.payment_status != Booking.PaymentStatus.PAID:
+        if booking.stripe_payment_intent_id:
+            from apps.concierge.stripe_utils import confirm_booking_payment
+
+            if not confirm_booking_payment(booking.stripe_payment_intent_id):
+                return {
+                    "content": "Payment could not be verified. Please try again or contact support.",
+                    "message_type": "payment",
+                    "flow": "booking",
+                    "next_step": "confirmation",
+                    "ui_data": {
+                        "error": "Payment verification failed.",
+                        "booking_id": str(booking.id),
+                    },
+                }
+
         booking.payment_status = Booking.PaymentStatus.PAID
         booking.status = Booking.Status.CONFIRMED
         booking.save(update_fields=["payment_status", "status"])
@@ -570,11 +605,32 @@ def _build_confirmation(
     data: dict[str, Any],
     booking: Booking,
 ) -> dict[str, Any]:
-    """Build the confirmation response dict."""
+    """Build the confirmation response dict and send SMS/email (once)."""
+    ctx = conversation.context or {}
+    already_notified = ctx.get("confirmation_sent_for") == str(booking.id)
+
+    if not already_notified:
+        from apps.concierge.email import send_booking_confirmation_email
+        from apps.concierge.sms import send_booking_confirmation
+
+        guest = booking.guest
+
+        if guest and guest.phone:
+            send_booking_confirmation(guest, booking)
+        if guest and guest.email:
+            send_booking_confirmation_email(guest, booking)
+
+        ctx["confirmation_sent_for"] = str(booking.id)
+        conversation.context = ctx
+        conversation.save(update_fields=["context"])
+
     whatsapp_number = getattr(settings, "WHATSAPP_NUMBER", "")
     whatsapp_url = ""
     if whatsapp_number:
         whatsapp_url = f"https://wa.me/{whatsapp_number}?text=Booking%20{booking.confirmation_number}"
+
+    site_url = getattr(settings, "SITE_URL", "https://coresync.com")
+    calendar_url = f"{site_url}/concierge/calendar/{booking.id}/"
 
     return {
         "content": "Your session is confirmed.",
@@ -588,6 +644,7 @@ def _build_confirmation(
             "experience_tier": booking.get_experience_tier_display(),
             "booking_id": str(booking.id),
             "whatsapp_url": whatsapp_url,
+            "calendar_url": calendar_url,
         },
         "metadata": {
             "action_triggered": "booking_confirmed",

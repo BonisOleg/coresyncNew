@@ -93,17 +93,14 @@ def create_booking_safe(
     # Use database transaction with row-level locking
     with transaction.atomic():
         # Find and lock the slot (SELECT FOR UPDATE)
-        try:
-            slot = (
-                BookingSlot.objects.select_for_update()
-                .filter(
-                    date=date_value,
-                    time_start=time_start,
-                )
-                .first()
+        slot = (
+            BookingSlot.objects.select_for_update()
+            .filter(
+                date=date_value,
+                time_start=time_start,
             )
-        except BookingSlot.DoesNotExist:
-            slot = None
+            .first()
+        )
 
         if not slot:
             raise SlotNotFoundError(

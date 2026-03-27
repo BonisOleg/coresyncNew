@@ -10,7 +10,7 @@ import uuid
 
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 
 from .engine import process_message
 from .flow_engine import TEMPLATE_MAP, process_flow_message
@@ -160,3 +160,23 @@ def concierge_message(request: HttpRequest) -> HttpResponse:
         "message_type": response_data.get("message_type", "text"),
     }
     return render(request, template_name, ctx)
+
+
+@require_GET
+def calendar_download(request: HttpRequest, booking_id: str) -> HttpResponse:
+    """Serve an .ics calendar file for a confirmed booking."""
+    from apps.bookings.models import Booking
+    from .email import generate_ics
+
+    try:
+        booking = Booking.objects.get(
+            id=booking_id,
+            status__in=[Booking.Status.CONFIRMED, Booking.Status.COMPLETED],
+        )
+    except Booking.DoesNotExist:
+        return HttpResponse("Booking not found.", status=404)
+
+    ics_data = generate_ics(booking)
+    response = HttpResponse(ics_data, content_type="text/calendar; charset=utf-8")
+    response["Content-Disposition"] = f'attachment; filename="coresync-{booking.confirmation_number}.ics"'
+    return response

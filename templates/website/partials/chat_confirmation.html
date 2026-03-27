@@ -25,6 +25,12 @@
         </div>
 
         <div class="chat-confirmation__actions">
+            {% if ui_data.calendar_url %}
+            <a href="{{ ui_data.calendar_url }}" class="chat-flow-btn chat-flow-btn--primary"
+               download="coresync-booking.ics">
+                Add to Calendar
+            </a>
+            {% endif %}
             <button class="chat-flow-btn chat-flow-btn--primary" type="button"
                     data-flow-step="environment"
                     data-booking-id="{{ ui_data.booking_id }}">
@@ -40,6 +46,10 @@
                 Contact via WhatsApp
             </a>
             {% endif %}
+            <button class="chat-flow-btn chat-flow-btn--ghost" type="button"
+                    data-action="close-concierge">
+                Done
+            </button>
         </div>
     </div>
 </div>

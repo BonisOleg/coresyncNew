@@ -39,6 +39,7 @@
     max-width: 100%;
     height: 100%;
     z-index: var(--z-panel);
+    background: var(--glass-bg);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border-left: var(--glass-border);
@@ -194,6 +195,7 @@
     max-width: 100%;
     height: 100%;
     z-index: var(--z-concierge);
+    background: var(--glass-bg);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border-left: var(--glass-border);
