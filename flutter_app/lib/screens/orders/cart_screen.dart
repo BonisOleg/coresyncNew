@@ -3,18 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../config/theme.dart';
-import '../../models/product.dart';
+import '../../models/cart_item.dart';
 import '../../providers/providers.dart';
 import '../../widgets/glass_panel.dart';
-
-class CartItem {
-  final Product product;
-  int quantity;
-
-  CartItem({required this.product, this.quantity = 1});
-
-  double get subtotal => double.parse(product.price) * quantity;
-}
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
@@ -24,7 +15,6 @@ class CartScreen extends ConsumerStatefulWidget {
 }
 
 class _CartScreenState extends ConsumerState<CartScreen> {
-  final List<CartItem> _items = [];
   final _messageController = TextEditingController();
   bool _isPlacing = false;
   bool _payFromWallet = false;
@@ -51,33 +41,17 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     super.dispose();
   }
 
-  double get _total => _items.fold(0.0, (s, item) => s + item.subtotal);
-
-  void _increment(int index) {
-    setState(() => _items[index].quantity++);
-  }
-
-  void _decrement(int index) {
-    setState(() {
-      if (_items[index].quantity > 1) {
-        _items[index].quantity--;
-      } else {
-        _items.removeAt(index);
-      }
-    });
-  }
-
-  void _removeItem(int index) {
-    setState(() => _items.removeAt(index));
-  }
+  double _total(List<CartItem> items) =>
+      items.fold(0.0, (s, item) => s + item.subtotal);
 
   Future<void> _placeOrder() async {
-    if (_items.isEmpty) return;
+    final items = ref.read(cartProvider);
+    if (items.isEmpty) return;
     setState(() => _isPlacing = true);
 
     try {
       final orderService = ref.read(orderServiceProvider);
-      final itemsData = _items
+      final itemsData = items
           .map((c) => {
                 'product_id': c.product.id,
                 'quantity': c.quantity,
@@ -94,11 +68,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       }
 
       if (!mounted) return;
-      setState(() {
-        _items.clear();
-        _messageController.clear();
-        _isPlacing = false;
-      });
+      ref.read(cartProvider.notifier).clear();
+      _messageController.clear();
+      setState(() => _isPlacing = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Order placed successfully'),
@@ -120,10 +92,13 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final items = ref.watch(cartProvider);
+    final cartNotifier = ref.read(cartProvider.notifier);
+
     return Scaffold(
       backgroundColor: CoreSyncColors.bg,
       appBar: AppBar(title: const Text('Cart')),
-      body: _items.isEmpty ? _buildEmptyCart() : _buildCartContent(),
+      body: items.isEmpty ? _buildEmptyCart() : _buildCartContent(items, cartNotifier),
     );
   }
 
@@ -164,20 +139,20 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     );
   }
 
-  Widget _buildCartContent() {
+  Widget _buildCartContent(List<CartItem> items, CartNotifier cartNotifier) {
     return Column(
       children: [
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              ..._items.asMap().entries.map((e) => Padding(
+              ...items.asMap().entries.map((e) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: _CartItemTile(
                       item: e.value,
-                      onIncrement: () => _increment(e.key),
-                      onDecrement: () => _decrement(e.key),
-                      onRemove: () => _removeItem(e.key),
+                      onIncrement: () => cartNotifier.increment(e.key),
+                      onDecrement: () => cartNotifier.decrement(e.key),
+                      onRemove: () => cartNotifier.removeItem(e.key),
                     ),
                   )),
               const SizedBox(height: 8),
@@ -223,7 +198,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               ),
                             ),
                             Text(
-                              'Balance: \$$_walletBalance',
+                              'Balance: \u20AC$_walletBalance',
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: CoreSyncColors.textSecondary,
@@ -244,12 +219,13 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             ],
           ),
         ),
-        _buildBottomBar(),
+        _buildBottomBar(items),
       ],
     );
   }
 
-  Widget _buildBottomBar() {
+  Widget _buildBottomBar(List<CartItem> items) {
+    final total = _total(items);
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
       decoration: const BoxDecoration(
@@ -275,7 +251,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   ),
                 ),
                 Text(
-                  '\$${_total.toStringAsFixed(2)}',
+                  '\u20AC${total.toStringAsFixed(2)}',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
@@ -361,7 +337,7 @@ class _CartItemTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '\$${item.product.price} each',
+                  '\u20AC${item.product.price} each',
                   style: const TextStyle(
                     fontSize: 12,
                     color: CoreSyncColors.textSecondary,
@@ -399,7 +375,7 @@ class _CartItemTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '\$${item.subtotal.toStringAsFixed(2)}',
+                '\u20AC${item.subtotal.toStringAsFixed(2)}',
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,

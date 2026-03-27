@@ -86,6 +86,20 @@ def process_flow_message(
     """
     accumulated = merge_flow_data(conversation, flow_data)
 
+    if flow_step == "done":
+        set_flow_state(conversation, flow=None, step="")
+        return {
+            "content": "No problem. I'm here whenever you're ready.",
+            "message_type": "buttons",
+            "ui_data": {
+                "buttons": [
+                    {"label": "Book a session", "flow_step": "start_booking"},
+                    {"label": "Explore membership", "flow_step": "start_membership"},
+                ],
+            },
+            "metadata": {},
+        }
+
     if flow_step.startswith("membership"):
         from .flows.membership import handle_membership_step
 

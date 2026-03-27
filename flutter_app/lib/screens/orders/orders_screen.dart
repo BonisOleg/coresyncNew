@@ -7,15 +7,6 @@ import '../../models/product.dart';
 import '../../providers/providers.dart';
 import '../../widgets/glass_panel.dart';
 
-class _CartItem {
-  final Product product;
-  int quantity;
-
-  _CartItem({required this.product, this.quantity = 1});
-
-  double get subtotal => double.parse(product.price) * quantity;
-}
-
 class OrdersScreen extends ConsumerStatefulWidget {
   const OrdersScreen({super.key});
 
@@ -28,7 +19,6 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
 
   String _selectedCategory = 'All';
   List<Product> _products = [];
-  final List<_CartItem> _cart = [];
   bool _isLoading = true;
 
   @override
@@ -50,22 +40,12 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
     });
   }
 
-  void _addToCart(Product product) {
-    setState(() {
-      final existing = _cart.indexWhere((c) => c.product.id == product.id);
-      if (existing >= 0) {
-        _cart[existing].quantity++;
-      } else {
-        _cart.add(_CartItem(product: product));
-      }
-    });
-  }
-
-  int get _totalCartItems =>
-      _cart.fold(0, (sum, item) => sum + item.quantity);
-
   @override
   Widget build(BuildContext context) {
+    final cart = ref.watch(cartProvider);
+    final cartNotifier = ref.read(cartProvider.notifier);
+    final totalCartItems = cartNotifier.totalItems();
+
     return Scaffold(
       backgroundColor: CoreSyncColors.bg,
       appBar: AppBar(
@@ -82,7 +62,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                 icon: const Icon(Icons.shopping_bag_outlined, size: 22),
                 onPressed: () => context.go('/orders/cart'),
               ),
-              if (_totalCartItems > 0)
+              if (totalCartItems > 0)
                 Positioned(
                   top: 8,
                   right: 6,
@@ -97,7 +77,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                       minHeight: 18,
                     ),
                     child: Text(
-                      '$_totalCartItems',
+                      '$totalCartItems',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 10,
@@ -139,23 +119,19 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                             childAspectRatio: 0.72,
                           ),
                           itemCount: _products.length,
-                          itemBuilder: (context, index) =>
-                              _ProductCard(
-                                product: _products[index],
-                                cartQty: _cartQtyFor(_products[index].id),
-                                onAdd: () => _addToCart(_products[index]),
-                              ),
+                          itemBuilder: (context, index) => _ProductCard(
+                            product: _products[index],
+                            cartQty: cartNotifier
+                                .quantityFor(_products[index].id),
+                            onAdd: () =>
+                                cartNotifier.addItem(_products[index]),
+                          ),
                         ),
                       ),
           ),
         ],
       ),
     );
-  }
-
-  int _cartQtyFor(int productId) {
-    final idx = _cart.indexWhere((c) => c.product.id == productId);
-    return idx >= 0 ? _cart[idx].quantity : 0;
   }
 
   Widget _buildCategoryTabs() {
@@ -275,7 +251,7 @@ class _ProductCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '\$${product.price}',
+                    '\u20AC${product.price}',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,

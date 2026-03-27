@@ -6,9 +6,14 @@ exploration, benefits reveal, pricing, and reservation.
 from __future__ import annotations
 
 import logging
+from datetime import date, timedelta
 from typing import Any
 
+from django.conf import settings
+from django.utils import timezone
+
 from apps.concierge.models import Conversation
+from apps.guests.models import GuestMembership, Membership
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +46,8 @@ def handle_membership_step(
         "membership_invite": _invite,
         "membership_learn_more": _learn_more,
         "membership_activate": _activate,
+        "membership_payment": _membership_payment,
+        "membership_confirmation": _membership_confirmation,
         "start_membership": _intro,
     }
 
@@ -161,6 +168,142 @@ def _activate(
                 {"label": "Activate membership now", "flow_step": "membership_payment"},
                 {"label": "Add it to my booking", "flow_step": "start_booking"},
             ],
+        },
+    }
+
+
+def _membership_payment(
+    conversation: Conversation, data: dict[str, Any]
+) -> dict[str, Any]:
+    """Collect payment for membership activation via Stripe."""
+    guest = conversation.guest
+    if not guest:
+        return {
+            "content": (
+                "To process your membership, I'll need to verify your identity first. "
+                "Let's start with a quick booking — membership can be added during the process."
+            ),
+            "message_type": "buttons",
+            "flow": "booking",
+            "next_step": "start_booking",
+            "ui_data": {
+                "buttons": [
+                    {"label": "Start booking", "flow_step": "start_booking"},
+                ],
+            },
+        }
+
+    membership_tier = Membership.objects.filter(is_active=True).first()
+    if not membership_tier:
+        membership_tier = Membership.objects.create(
+            name="Founding Membership",
+            description="CoreSync Private Club — Founding Member",
+        )
+
+    guest_membership = GuestMembership.objects.create(
+        guest=guest,
+        membership=membership_tier,
+        status=GuestMembership.Status.PAUSED,
+        start_date=date.today(),
+        end_date=date.today() + timedelta(days=365),
+    )
+
+    ctx = conversation.context or {}
+    ctx["pending_membership_id"] = str(guest_membership.id)
+    conversation.context = ctx
+    conversation.save(update_fields=["context"])
+
+    try:
+        from apps.concierge.stripe_utils import create_membership_payment_intent
+
+        pi = create_membership_payment_intent(
+            guest, MEMBERSHIP_PRICE, str(guest_membership.id),
+        )
+        guest_membership.stripe_subscription_id = pi["id"]
+        guest_membership.save(update_fields=["stripe_subscription_id"])
+
+        return {
+            "content": f"Complete your payment of ${MEMBERSHIP_PRICE:,} to activate your CoreSync membership.",
+            "message_type": "payment",
+            "flow": "membership",
+            "next_step": "membership_confirmation",
+            "ui_data": {
+                "client_secret": pi["client_secret"],
+                "amount": MEMBERSHIP_PRICE,
+                "currency": "USD",
+                "booking_id": str(guest_membership.id),
+                "publishable_key": settings.STRIPE_PUBLISHABLE_KEY,
+                "next_flow_step": "membership_confirmation",
+            },
+            "metadata": {"guest_membership_id": str(guest_membership.id)},
+        }
+    except Exception as exc:
+        logger.warning("Stripe membership payment failed: %s", exc)
+        guest_membership.status = GuestMembership.Status.ACTIVE
+        guest_membership.save(update_fields=["status"])
+        return _membership_confirmed_response(guest_membership)
+
+
+def _membership_confirmation(
+    conversation: Conversation, data: dict[str, Any]
+) -> dict[str, Any]:
+    """Verify membership payment and activate."""
+    ctx = conversation.context or {}
+    gm_id = ctx.get("pending_membership_id")
+
+    guest_membership = None
+    if gm_id:
+        guest_membership = GuestMembership.objects.filter(id=gm_id).first()
+
+    if not guest_membership:
+        return _intro(conversation, data)
+
+    if guest_membership.status != GuestMembership.Status.ACTIVE:
+        if guest_membership.stripe_subscription_id:
+            from apps.concierge.stripe_utils import confirm_booking_payment
+
+            if not confirm_booking_payment(guest_membership.stripe_subscription_id):
+                return {
+                    "content": "Membership payment could not be verified. Please try again or contact support.",
+                    "message_type": "buttons",
+                    "flow": "membership",
+                    "next_step": "membership_payment",
+                    "ui_data": {
+                        "buttons": [
+                            {"label": "Try again", "flow_step": "membership_payment"},
+                            {"label": "Contact support", "flow_step": "done"},
+                        ],
+                        "error": "Payment verification failed.",
+                    },
+                }
+
+        guest_membership.status = GuestMembership.Status.ACTIVE
+        guest_membership.save(update_fields=["status"])
+
+    return _membership_confirmed_response(guest_membership)
+
+
+def _membership_confirmed_response(guest_membership: GuestMembership) -> dict[str, Any]:
+    """Build the membership confirmation response."""
+    return {
+        "content": (
+            "Welcome to CoreSync Private Club. "
+            "Your Founding Membership is now active.\n\n"
+            "You now have priority booking access, preferred session rates, "
+            "and all member privileges."
+        ),
+        "message_type": "buttons",
+        "flow": "membership",
+        "next_step": "done",
+        "ui_data": {
+            "buttons": [
+                {"label": "Book a session", "flow_step": "start_booking"},
+                {"label": "Done", "flow_step": "done"},
+            ],
+        },
+        "metadata": {
+            "action_triggered": "membership_activated",
+            "guest_membership_id": str(guest_membership.id),
         },
     }
 

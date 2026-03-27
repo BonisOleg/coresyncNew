@@ -629,8 +629,7 @@ def _build_confirmation(
     if whatsapp_number:
         whatsapp_url = f"https://wa.me/{whatsapp_number}?text=Booking%20{booking.confirmation_number}"
 
-    site_url = getattr(settings, "SITE_URL", "https://coresync.com")
-    calendar_url = f"{site_url}/concierge/calendar/{booking.id}/"
+    calendar_url = f"/concierge/calendar/{booking.id}/"
 
     return {
         "content": "Your session is confirmed.",

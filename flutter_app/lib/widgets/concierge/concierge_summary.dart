@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../config/theme.dart';
 
@@ -52,7 +54,7 @@ class _ConciergeSummaryState extends State<ConciergeSummary> {
               if ((data['food_preference'] as String? ?? '').isNotEmpty)
                 _row('Preference', data['food_preference'] as String),
               const Divider(color: CoreSyncColors.glassBorder, height: 20),
-              _row('Total', '\$${data['price']}', isBold: true),
+              _row('Total', '\u20AC${data['price']}', isBold: true),
             ],
           ),
         ),
@@ -69,11 +71,42 @@ class _ConciergeSummaryState extends State<ConciergeSummary> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(top: 12),
-                child: Text(
-                  'I agree to the Terms & Conditions and Cancellation Policy',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: CoreSyncColors.textSecondary,
+                child: RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: CoreSyncColors.textSecondary,
+                    ),
+                    children: [
+                      const TextSpan(text: 'I agree to the '),
+                      TextSpan(
+                        text: 'Terms & Conditions',
+                        style: const TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: CoreSyncColors.textPrimary,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrl(
+                                Uri.parse(
+                                    'https://coresync-private.onrender.com/terms/'),
+                                mode: LaunchMode.externalApplication,
+                              ),
+                      ),
+                      const TextSpan(text: ' and '),
+                      TextSpan(
+                        text: 'Cancellation Policy',
+                        style: const TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: CoreSyncColors.textPrimary,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrl(
+                                Uri.parse(
+                                    'https://coresync-private.onrender.com/terms/'),
+                                mode: LaunchMode.externalApplication,
+                              ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -83,7 +116,7 @@ class _ConciergeSummaryState extends State<ConciergeSummary> {
         const SizedBox(height: 8),
         ElevatedButton(
           onPressed: _termsAccepted ? widget.onPay : null,
-          child: Text('Pay \$${data['price']}'),
+          child: Text('Pay \u20AC${data['price']}'),
         ),
       ],
     );

@@ -11,6 +11,8 @@ import '../services/wallet_service.dart';
 import '../services/concierge_service.dart';
 import '../services/spa_control_service.dart';
 
+export 'cart_provider.dart';
+
 // ── Service Providers ─────────────────────────────────────────────────────
 
 final apiClientProvider = Provider<ApiClient>(

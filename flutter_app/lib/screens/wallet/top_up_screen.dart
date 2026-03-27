@@ -79,7 +79,7 @@ class _TopUpScreenState extends ConsumerState<TopUpScreen> {
       final newBalance = result?['balance']?.toString() ?? _effectiveAmount;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Wallet topped up. New balance: \$$newBalance'),
+          content: Text('Wallet topped up. New balance: \u20AC$newBalance'),
           backgroundColor: Colors.green,
         ),
       );
@@ -137,7 +137,7 @@ class _TopUpScreenState extends ConsumerState<TopUpScreen> {
                           const TextStyle(color: CoreSyncColors.textPrimary),
                       decoration: const InputDecoration(
                         hintText: 'Enter amount',
-                        prefixText: '\$ ',
+                        prefixText: '\u20AC ',
                         prefixStyle:
                             TextStyle(color: CoreSyncColors.textSecondary),
                         border: InputBorder.none,
@@ -178,7 +178,7 @@ class _TopUpScreenState extends ConsumerState<TopUpScreen> {
                           )
                         : Text(
                             _effectiveAmount.isNotEmpty
-                                ? 'Top Up \$$_effectiveAmount'
+                                ? 'Top Up \u20AC$_effectiveAmount'
                                 : 'Top Up',
                             style: const TextStyle(fontSize: 16),
                           ),
@@ -228,7 +228,7 @@ class _TopUpScreenState extends ConsumerState<TopUpScreen> {
             ),
             child: Center(
               child: Text(
-                isCustom ? 'Custom' : '\$${opt.amount}',
+                isCustom ? 'Custom' : '\u20AC${opt.amount}',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

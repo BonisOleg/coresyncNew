@@ -229,7 +229,7 @@ CSRF_TRUSTED_ORIGINS: list[str] = [
 # External service keys (loaded from env, used by service modules)
 # ---------------------------------------------------------------------------
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3-flash")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
 ATLAS_API_KEY = os.environ.get("ATLAS_API_KEY", "")
 ATLAS_WEBHOOK_SECRET = os.environ.get("ATLAS_WEBHOOK_SECRET", "")

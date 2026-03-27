@@ -60,7 +60,7 @@
         } else {
             var form = document.getElementById("concierge-form");
             if (form) {
-                form.querySelector("[name='flow_step']").value = "confirmation";
+                form.querySelector("[name='flow_step']").value = "{{ ui_data.next_flow_step|default:'confirmation' }}";
                 form.querySelector("[name='booking_id']").value = "{{ ui_data.booking_id }}";
                 form.querySelector("[name='message']").value = "Payment confirmed";
                 htmx.trigger(form, "submit");

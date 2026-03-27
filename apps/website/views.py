@@ -72,6 +72,16 @@ def privacy_policy(request: HttpRequest) -> HttpResponse:
     return render(request, "website/privacy.html")
 
 
+def terms_of_service(request: HttpRequest) -> HttpResponse:
+    """Terms of service page — required for app store submissions."""
+    return render(request, "website/terms.html")
+
+
+def cancellation_policy(request: HttpRequest) -> HttpResponse:
+    """Cancellation policy page — linked from booking summary."""
+    return render(request, "website/cancellation.html")
+
+
 def support_page(request: HttpRequest) -> HttpResponse:
     """Support page — required for app store submissions."""
     context = {"whatsapp_number": settings.WHATSAPP_NUMBER}

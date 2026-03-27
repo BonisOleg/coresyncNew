@@ -175,7 +175,7 @@ class _TransactionTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '${s.prefix}\$${transaction.amount}',
+                '${s.prefix}\u20AC${transaction.amount}',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -184,7 +184,7 @@ class _TransactionTile extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'Bal: \$${transaction.balanceAfter}',
+                'Bal: \u20AC${transaction.balanceAfter}',
                 style: const TextStyle(
                   fontSize: 11,
                   color: CoreSyncColors.textMuted,

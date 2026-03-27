@@ -44,8 +44,13 @@ def stripe_webhook(request: HttpRequest) -> HttpResponse:
     event_type = event.get("type", "")
     data_object = event.get("data", {}).get("object", {})
 
+    payment_type = data_object.get("metadata", {}).get("type", "booking")
+
     if event_type == "payment_intent.succeeded":
-        _handle_payment_succeeded(data_object)
+        if payment_type == "membership":
+            _handle_membership_payment_succeeded(data_object)
+        else:
+            _handle_payment_succeeded(data_object)
     elif event_type == "payment_intent.payment_failed":
         _handle_payment_failed(data_object)
 
@@ -77,7 +82,44 @@ def _handle_payment_succeeded(payment_intent: dict) -> None:
         booking.generate_confirmation_number()
     booking.save(update_fields=["payment_status", "status", "confirmation_number"])
 
+    guest = booking.guest
+    if guest:
+        from apps.concierge.sms import send_booking_confirmation
+        from apps.concierge.email import send_booking_confirmation_email
+
+        if guest.phone:
+            send_booking_confirmation(guest, booking)
+        if guest.email:
+            send_booking_confirmation_email(guest, booking)
+
     logger.info("Booking %s confirmed via Stripe webhook (PI: %s)", booking_id, pi_id)
+
+
+def _handle_membership_payment_succeeded(payment_intent: dict) -> None:
+    """Activate membership after successful payment."""
+    from apps.guests.models import GuestMembership
+
+    gm_id = payment_intent.get("metadata", {}).get("guest_membership_id")
+    pi_id = payment_intent.get("id", "")
+
+    if not gm_id:
+        logger.warning("membership payment_intent.succeeded without guest_membership_id: %s", pi_id)
+        return
+
+    try:
+        gm = GuestMembership.objects.select_related("guest").get(id=gm_id)
+    except GuestMembership.DoesNotExist:
+        logger.error("GuestMembership %s not found for PaymentIntent %s", gm_id, pi_id)
+        return
+
+    if gm.status == GuestMembership.Status.ACTIVE:
+        logger.info("GuestMembership %s already active", gm_id)
+        return
+
+    gm.status = GuestMembership.Status.ACTIVE
+    gm.save(update_fields=["status"])
+
+    logger.info("GuestMembership %s activated via Stripe webhook (PI: %s)", gm_id, pi_id)
 
 
 def _handle_payment_failed(payment_intent: dict) -> None:

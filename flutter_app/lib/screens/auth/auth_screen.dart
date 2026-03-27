@@ -1,7 +1,9 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../config/theme.dart';
 import '../../providers/providers.dart';
@@ -143,6 +145,47 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                               fontWeight: FontWeight.w600,
                             ),
                           ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: CoreSyncColors.textMuted,
+                      height: 1.6,
+                    ),
+                    children: [
+                      const TextSpan(text: 'By continuing, you agree to our '),
+                      TextSpan(
+                        text: 'Terms of Service',
+                        style: const TextStyle(
+                          color: CoreSyncColors.textSecondary,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrl(
+                                Uri.parse(
+                                    'https://coresync-private.onrender.com/terms/'),
+                                mode: LaunchMode.externalApplication,
+                              ),
+                      ),
+                      const TextSpan(text: ' and '),
+                      TextSpan(
+                        text: 'Privacy Policy',
+                        style: const TextStyle(
+                          color: CoreSyncColors.textSecondary,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrl(
+                                Uri.parse(
+                                    'https://coresync-private.onrender.com/privacy/'),
+                                mode: LaunchMode.externalApplication,
+                              ),
+                      ),
+                    ],
                   ),
                 ),
                 Spacer(flex: bottomInset > 0 ? 1 : 4),

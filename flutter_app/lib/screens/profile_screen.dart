@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../config/theme.dart';
 import '../providers/providers.dart';
@@ -393,9 +394,81 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                   ),
 
+                  const SizedBox(height: 32),
+                  const Text(
+                    'LEGAL',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2,
+                      color: CoreSyncColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  GlassPanel(
+                    padding: const EdgeInsets.all(4),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          dense: true,
+                          leading: const Icon(
+                            Icons.description_outlined,
+                            size: 20,
+                            color: CoreSyncColors.textSecondary,
+                          ),
+                          title: const Text(
+                            'Terms of Service',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: CoreSyncColors.textPrimary,
+                            ),
+                          ),
+                          trailing: const Icon(
+                            Icons.open_in_new,
+                            size: 16,
+                            color: CoreSyncColors.textMuted,
+                          ),
+                          onTap: () => launchUrl(
+                            Uri.parse(
+                                'https://coresync-private.onrender.com/terms/'),
+                            mode: LaunchMode.externalApplication,
+                          ),
+                        ),
+                        const Divider(
+                          height: 1,
+                          color: CoreSyncColors.glassBorder,
+                        ),
+                        ListTile(
+                          dense: true,
+                          leading: const Icon(
+                            Icons.privacy_tip_outlined,
+                            size: 20,
+                            color: CoreSyncColors.textSecondary,
+                          ),
+                          title: const Text(
+                            'Privacy Policy',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: CoreSyncColors.textPrimary,
+                            ),
+                          ),
+                          trailing: const Icon(
+                            Icons.open_in_new,
+                            size: 16,
+                            color: CoreSyncColors.textMuted,
+                          ),
+                          onTap: () => launchUrl(
+                            Uri.parse(
+                                'https://coresync-private.onrender.com/privacy/'),
+                            mode: LaunchMode.externalApplication,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   const SizedBox(height: 48),
 
-                  // Delete account
                   const Text(
                     'DANGER ZONE',
                     style: TextStyle(

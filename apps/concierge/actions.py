@@ -116,6 +116,10 @@ def handle_membership_action(action: dict[str, Any], conversation: Conversation)
             conversation.save(update_fields=["guest"])
 
     metadata["action_status"] = "success"
+    metadata["buttons"] = [
+        {"label": "Explore membership", "flow_step": "start_membership"},
+        {"label": "Book a session", "flow_step": "start_booking"},
+    ]
     logger.info("Membership inquiry via concierge: %s", phone or email)
     return metadata
 
@@ -143,6 +147,10 @@ def handle_waitlist_action(action: dict[str, Any], conversation: Conversation) -
 
     metadata["action_status"] = "success"
     metadata["waitlist_id"] = str(entry.id)
+    metadata["buttons"] = [
+        {"label": "Book a session", "flow_step": "start_booking"},
+        {"label": "Explore membership", "flow_step": "start_membership"},
+    ]
     logger.info("Backyard waitlist entry created: %s", entry.id)
     return metadata
 
@@ -161,6 +169,10 @@ def handle_show_images_action(action: dict[str, Any], conversation: Conversation
         for img in images
     ]
     metadata["action_status"] = "success"
+    metadata["buttons"] = [
+        {"label": "Book a session", "flow_step": "start_booking"},
+        {"label": "Explore membership", "flow_step": "start_membership"},
+    ]
     return metadata
 
 
